@@ -1,0 +1,18 @@
+import { Metadata } from 'next'
+import BlogPage from './BlogPage'
+
+export const metadata: Metadata = {
+  title: 'AI Content Creation Blog - Tips, Tutorials & Insights | Kraftey',
+  description: 'Learn how to create better content with AI tools. Tips for background removal, banner creation, and content marketing for creators and businesses.',
+  keywords: 'AI content creation, background removal tips, banner design, content marketing, AI tools blog',
+  openGraph: {
+    title: 'AI Content Creation Blog - Tips, Tutorials & Insights',
+    description: 'Learn how to create better content with AI tools. Tips and tutorials for creators.',
+    type: 'website',
+  }
+}
+
+export default function Page() {
+  return <BlogPage />
+}
+
