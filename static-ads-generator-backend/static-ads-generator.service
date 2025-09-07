@@ -1,0 +1,30 @@
+[Unit]
+Description=Static Ads Generator API
+After=network.target
+
+[Service]
+Type=exec
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/hosting/kraftey-static-ads-backend
+Environment=PATH=/opt/hosting/kraftey-static-ads-backend/venv/bin
+Environment=ENVIRONMENT=production
+Environment=PORT=8000
+Environment=HOST=127.0.0.1
+ExecStart=/opt/hosting/kraftey-static-ads-backend/venv/bin/uvicorn main:app --host 127.0.0.1 --port 8000 --workers 4
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=static-ads-generator
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/hosting/kraftey-static-ads-backend/uploads /opt/hosting/kraftey-static-ads-backend/logs
+
+[Install]
+WantedBy=multi-user.target
