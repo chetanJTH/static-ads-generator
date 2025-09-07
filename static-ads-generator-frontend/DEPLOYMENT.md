@@ -1,86 +1,39 @@
 # Frontend Deployment Guide
 
-This guide covers deploying the Static Ads Generator Frontend to various platforms.
+This guide covers deploying the Static Ads Generator Frontend to Digital Ocean using automated CI/CD.
 
-## Vercel Deployment (Recommended)
+## Digital Ocean Deployment (Recommended)
 
-1. **Connect to Vercel**
-   - Go to [vercel.com](https://vercel.com)
-   - Click "New Project"
-   - Import your `static-ads-generator-frontend` repository
+This project is configured for automated deployment to Digital Ocean using GitHub Actions.
 
-2. **Configure build settings**
-   - Framework Preset: Next.js
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-   - Install Command: `npm install`
+### Prerequisites
 
-3. **Set environment variables**
-   - Go to Project Settings > Environment Variables
-   - Add the following variables:
-     ```
-     NEXT_PUBLIC_API_BASE=https://your-backend-domain.com
-     NEXTAUTH_URL=https://your-frontend-domain.com
-     NEXTAUTH_SECRET=your-secret-key
-     DATABASE_URL=your-database-url
-     GOOGLE_CLIENT_ID=your-google-client-id
-     GOOGLE_CLIENT_SECRET=your-google-client-secret
-     ```
+- Digital Ocean droplet/server
+- Domain name (optional but recommended)
+- GitHub repository with proper secrets configured
 
-4. **Deploy**
-   - Click "Deploy"
-   - Vercel will automatically build and deploy your app
+### Quick Setup
 
-## Railway Deployment
-
-1. **Create a new project on Railway**
-   - Go to [railway.app](https://railway.app)
-   - Click "New Project"
-   - Select "Deploy from GitHub repo"
-
-2. **Connect your repository**
-   - Select the `static-ads-generator-frontend` repository
-   - Railway will automatically detect the Next.js project
-
-3. **Set environment variables**
-   - Add all required environment variables in Railway dashboard
-
-4. **Deploy**
-   - Railway will automatically build and deploy
-
-## Netlify Deployment
-
-1. **Connect to Netlify**
-   - Go to [netlify.com](https://netlify.com)
-   - Click "New site from Git"
-   - Connect your repository
-
-2. **Configure build settings**
-   - Build command: `npm run build`
-   - Publish directory: `.next`
-
-3. **Set environment variables**
-   - Go to Site settings > Environment variables
-   - Add all required variables
-
-4. **Deploy**
-   - Netlify will automatically build and deploy
-
-## Docker Deployment
-
-1. **Build the image**
+1. **Set up your Digital Ocean server**
    ```bash
-   docker build -t static-ads-frontend .
+   scp scripts/setup-server-no-docker.sh root@YOUR_SERVER_IP:/tmp/
+   ssh root@YOUR_SERVER_IP
+   chmod +x /tmp/setup-server-no-docker.sh
+   /tmp/setup-server-no-docker.sh
    ```
 
-2. **Run the container**
-   ```bash
-   docker run -p 3000:3000 \
-     -e NEXT_PUBLIC_API_BASE=https://your-backend-domain.com \
-     -e NEXTAUTH_URL=https://your-frontend-domain.com \
-     -e NEXTAUTH_SECRET=your-secret-key \
-     static-ads-frontend
-   ```
+2. **Configure GitHub secrets** in your repository settings
+3. **Push to main branch** - deployment happens automatically!
+
+### Manual Deployment
+
+If you need to deploy manually:
+
+```bash
+# On your server
+cd /opt/static-ads-frontend
+./scripts/deploy-no-docker.sh
+```
 
 ## Environment Variables
 

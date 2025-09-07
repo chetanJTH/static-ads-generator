@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import axios from 'axios'
 
 export async function GET(
   request: NextRequest,
@@ -30,7 +31,7 @@ async function handleRequest(
     const fullUrl = queryString ? `${url}?${queryString}` : url
     
     // Prepare headers
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': request.headers.get('content-type') || 'application/json',
     }
     
@@ -43,10 +44,12 @@ async function handleRequest(
       }
     }
     
-    // Prepare request options
-    const options: RequestInit = {
-      method,
+    // Prepare axios config
+    const axiosConfig: any = {
+      method: method.toLowerCase() as any,
+      url: fullUrl,
       headers,
+      responseType: 'text',
     }
     
     // Add body for POST requests
@@ -55,39 +58,48 @@ async function handleRequest(
       if (contentType?.includes('multipart/form-data')) {
         // Handle file uploads
         const formData = await request.formData()
-        options.body = formData
-        // Don't set Content-Type for FormData, let the browser set it with boundary
+        axiosConfig.data = formData
+        // Don't set Content-Type for FormData, let axios set it with boundary
         delete headers['Content-Type']
       } else {
         // Handle JSON
         const body = await request.text()
         if (body) {
-          options.body = body
+          axiosConfig.data = body
         }
       }
     }
     
-    // Make request to FastAPI
-    const response = await fetch(fullUrl, options)
-    
-    // Get response data
-    const responseData = await response.text()
+    // Make request to FastAPI using axios
+    const response = await axios(axiosConfig)
     
     // Create new response
-    const newResponse = new NextResponse(responseData, {
+    const newResponse = new NextResponse(response.data, {
       status: response.status,
       statusText: response.statusText,
     })
     
     // Copy response headers
-    response.headers.forEach((value, key) => {
-      newResponse.headers.set(key, value)
+    Object.entries(response.headers).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        newResponse.headers.set(key, value)
+      }
     })
     
     return newResponse
     
   } catch (error) {
     console.error('API bridge error:', error)
+    
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status || 500
+      const data = error.response?.data || 'Internal server error'
+      return NextResponse.json(
+        { error: data },
+        { status }
+      )
+    }
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
