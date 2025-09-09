@@ -94,16 +94,6 @@ jobs:
           echo "🌐 Backend: https://staticapi.kraftey.com"
         EOF
 
-    - name: 📊 Deployment Status
-      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-      run: |
-        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
-          echo "📊 PM2 Status:"
-          pm2 status
-          
-          echo "📝 Recent logs:"
-          pm2 logs --lines 10
-        EOF
 
   health-check:
     runs-on: ubuntu-latest
