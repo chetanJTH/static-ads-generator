@@ -19,7 +19,7 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: 'apps/web/package-lock.json'
+        cache-dependency-path: 'package-lock.json'
 
     - name: 🔧 Setup Python
       uses: actions/setup-python@v4
@@ -27,15 +27,12 @@ jobs:
         python-version: '3.9'
 
     - name: 📦 Install frontend dependencies
-      working-directory: ./apps/web
       run: npm ci
 
     - name: 🧪 Run frontend tests
-      working-directory: ./apps/web
       run: npm run lint
 
     - name: 🏗️ Build frontend
-      working-directory: ./apps/web
       run: npm run build
 
     - name: 📦 Install backend dependencies
@@ -74,7 +71,7 @@ jobs:
           pip install -r requirements.txt
           
           echo "🎨 Setting up frontend..."
-          cd ../web
+          cd /home/ubuntu/static-ads-generator
           npm ci
           npm run build
           
@@ -85,7 +82,7 @@ jobs:
           cd apps/api
           pm2 start ecosystem.config.js --env production
           
-          cd ../web
+          cd /home/ubuntu/static-ads-generator
           pm2 start ecosystem.config.js --env production
           
           pm2 save

@@ -19,22 +19,18 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: 'apps/web/package-lock.json'
+        cache-dependency-path: 'package-lock.json'
 
     - name: 📦 Install dependencies
-      working-directory: ./apps/web
       run: npm ci
 
     - name: 🧪 Run linting
-      working-directory: ./apps/web
       run: npm run lint
 
     - name: 🏗️ Build application
-      working-directory: ./apps/web
       run: npm run build
 
     - name: 📊 Build size analysis
-      working-directory: ./apps/web
       run: |
         echo "📊 Build size analysis:"
         du -sh .next/ || echo "Build directory not found"
@@ -90,7 +86,6 @@ jobs:
         python-version: '3.9'
 
     - name: 🔒 Frontend security audit
-      working-directory: ./apps/web
       run: |
         npm audit --audit-level=high || echo "Security vulnerabilities found"
 
@@ -113,7 +108,6 @@ jobs:
         node-version: '18'
 
     - name: 📦 Install dependencies
-      working-directory: ./apps/web
       run: npm ci
 
     - name: 📊 Code quality checks
@@ -122,14 +116,14 @@ jobs:
         
         # Check for TODO/FIXME comments
         echo "🔍 Checking for TODO/FIXME comments:"
-        grep -r "TODO\|FIXME" apps/ || echo "No TODO/FIXME found"
+        grep -r "TODO\|FIXME" . || echo "No TODO/FIXME found"
         
         # Check for console.log statements
         echo "🔍 Checking for console.log statements:"
-        grep -r "console\.log" apps/web/ || echo "No console.log found"
+        grep -r "console\.log" . || echo "No console.log found"
         
         # Check file sizes
         echo "📊 Large files (>1MB):"
-        find apps/ -type f -size +1M -exec ls -lh {} \; || echo "No large files found"
+        find . -type f -size +1M -exec ls -lh {} \; || echo "No large files found"
 
 
