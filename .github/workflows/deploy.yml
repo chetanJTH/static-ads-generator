@@ -59,8 +59,8 @@ jobs:
         ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
         
         # Deploy to server
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
-          cd /home/ubuntu/static-ads-generator
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
+          cd /root/static-ads-generator
           
           echo "📥 Pulling latest code from Git..."
           git pull origin main
@@ -71,18 +71,18 @@ jobs:
           pip install -r requirements.txt
           
           echo "🎨 Setting up frontend..."
-          cd /home/ubuntu/static-ads-generator
+          cd /root/static-ads-generator
           npm ci
           npm run build
           
           echo "🔄 Restarting applications with PM2..."
-          cd /home/ubuntu/static-ads-generator
+          cd /root/static-ads-generator
           pm2 stop all
           
           cd apps/api
           pm2 start ecosystem.config.js --env production
           
-          cd /home/ubuntu/static-ads-generator
+          cd /root/static-ads-generator
           pm2 start ecosystem.config.js --env production
           
           pm2 save
@@ -95,7 +95,7 @@ jobs:
     - name: 📊 Deployment Status
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
           echo "📊 PM2 Status:"
           pm2 status
           

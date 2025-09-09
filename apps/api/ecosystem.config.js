@@ -3,7 +3,7 @@ module.exports = {
     name: 'static-ads-backend',
     script: 'main.py',
     interpreter: 'python3',
-    cwd: '/home/ubuntu/static-ads-generator/apps/api',
+    cwd: '/root/static-ads-generator/apps/api',
     instances: 1,
     autorestart: true,
     watch: false,
@@ -16,9 +16,9 @@ module.exports = {
       PORT: 8000,
       HOST: '0.0.0.0'
     },
-    error_file: '/home/ubuntu/static-ads-generator/logs/backend-error.log',
-    out_file: '/home/ubuntu/static-ads-generator/logs/backend-out.log',
-    log_file: '/home/ubuntu/static-ads-generator/logs/backend-combined.log',
+    error_file: '/root/static-ads-generator/logs/backend-error.log',
+    out_file: '/root/static-ads-generator/logs/backend-out.log',
+    log_file: '/root/static-ads-generator/logs/backend-combined.log',
     time: true
   }]
 };

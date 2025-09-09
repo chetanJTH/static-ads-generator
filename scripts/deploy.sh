@@ -9,7 +9,7 @@ set -e  # Exit on any error
 echo "🚀 Deploying Static Ads Generator to production..."
 
 # Set variables
-APP_DIR="/home/ubuntu/static-ads-generator"
+APP_DIR="/root/static-ads-generator"
 BACKEND_DIR="$APP_DIR/apps/api"
 FRONTEND_DIR="$APP_DIR/apps/web"
 LOG_DIR="$APP_DIR/logs"

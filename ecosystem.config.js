@@ -3,7 +3,7 @@ module.exports = {
     name: 'static-ads-frontend',
     script: 'npm',
     args: 'start',
-    cwd: '/home/ubuntu/static-ads-generator',
+    cwd: '/root/static-ads-generator',
     instances: 1,
     autorestart: true,
     watch: false,
@@ -16,9 +16,9 @@ module.exports = {
       NODE_ENV: 'production',
       PORT: 3000
     },
-    error_file: '/home/ubuntu/static-ads-generator/logs/frontend-error.log',
-    out_file: '/home/ubuntu/static-ads-generator/logs/frontend-out.log',
-    log_file: '/home/ubuntu/static-ads-generator/logs/frontend-combined.log',
+    error_file: '/root/static-ads-generator/logs/frontend-error.log',
+    out_file: '/root/static-ads-generator/logs/frontend-out.log',
+    log_file: '/root/static-ads-generator/logs/frontend-combined.log',
     time: true
   }]
 };
