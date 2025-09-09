@@ -2,6 +2,9 @@
 
 A Next.js frontend application for the Static Ads Generator platform.
 
+## 🚀 Deployment Status
+Backend is now working perfectly with PM2!
+
 ## Features
 
 - Modern React-based UI with Next.js 14
