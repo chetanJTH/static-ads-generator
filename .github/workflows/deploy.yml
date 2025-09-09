@@ -55,11 +55,22 @@ jobs:
         
         # Deploy to server using password authentication
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
+          echo "🚀 Starting deployment..."
+          
+          # Update PM2 to latest version
+          pm2 update
+          
           echo "🔧 Setting up backend..."
           cd /opt/hosting/kraftey-static-ads-backend
-          if [ -f "venv/bin/activate" ]; then
+          
+          # Check if virtual environment exists
+          if [ -d "venv" ]; then
+            echo "📦 Activating virtual environment..."
             source venv/bin/activate
             pip install -r requirements.txt
+          else
+            echo "⚠️ No virtual environment found, installing dependencies globally..."
+            pip3 install -r requirements.txt
           fi
           
           echo "🎨 Setting up frontend..."
@@ -71,7 +82,12 @@ jobs:
           pm2 restart next-static-ads
           pm2 restart static-ads-generator-backend
           
+          # Save PM2 configuration
           pm2 save
+          
+          # Show final status
+          echo "📊 Final PM2 Status:"
+          pm2 status
           
           echo "✅ Deployment complete!"
           echo "🌐 Frontend: https://kraftey.com"
