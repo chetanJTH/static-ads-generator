@@ -1,119 +1,89 @@
-# Static Ads Generator - Minimal Demo
+# Static Ads Generator Frontend
 
-A minimal, production-quality demo for generating static ads with product photos and AI-generated backgrounds.
+A Next.js frontend application for the Static Ads Generator platform.
 
 ## Features
 
-- **Single Page App**: Everything happens on one page with a single canvas
-- **Upload & Remove Background**: Drag & drop image upload with automatic background removal
-- **AI Background Generation**: Generate backgrounds from text prompts using Replicate FLUX
-- **Smart Composition**: Auto-layout product and text based on prompt parsing
-- **Real-time Preview**: Live canvas updates as you work
-- **Export**: Download final designs as PNG
+- Modern React-based UI with Next.js 14
+- Background removal tool
+- AI banner generator
+- Blog and content pages
+- Authentication with NextAuth.js
+- Responsive design with Tailwind CSS
 
 ## Quick Start
 
-1. **Install dependencies**:
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
    ```bash
-   # Install root dependencies
    npm install
-   
-   # Install frontend dependencies
-   cd apps/web && npm install
-   
-   # Install backend dependencies
-   cd ../api && pip install -r requirements.txt
    ```
 
-2. **Set up environment variables**:
+3. Set up environment variables:
    ```bash
-   # Frontend (.env in apps/web/)
-   NEXT_PUBLIC_API_BASE=http://localhost:8000
-   
-   # Backend (.env in apps/api/)
-   REPLICATE_API_TOKEN=your_token_here
-   FLUX_MODEL=black-forest-labs/flux-schnell:latest
-   USE_END_TO_END_POSTER=false
-   CORS_ORIGINS=http://localhost:3000
+   cp env.example .env.local
+   # Edit .env.local with your configuration
    ```
 
-3. **Start development servers**:
+4. Run the development server:
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**: http://localhost:3000
+The application will be available at `http://localhost:3000`.
 
-## How to Use
+## Environment Variables
 
-1. **Upload Image**: Drag & drop a product image
-2. **Remove Background**: Click "Remove Background" to get a transparent cutout
-3. **Generate Design**: Click "Promy" and enter a prompt like:
-   ```
-   Headline: Big Monsoon Sale! 30% Off. CTA: Shop Now. Theme: modern, teal & white, soft gradient, clean.
-   ```
-4. **Download**: Click "Download PNG" to save your design
+- `NEXT_PUBLIC_API_BASE`: Backend API base URL
+- `NEXTAUTH_SECRET`: Secret for NextAuth.js
+- `NEXTAUTH_URL`: Application URL
+- Database and authentication provider variables
 
-## API Endpoints
+## Deployment
 
-- `POST /remove-bg` - Remove background from image
-- `POST /design-card` - Generate complete ad design
-- `GET /health` - Health check
+### Vercel (Recommended)
+The project is configured for Vercel deployment with the included `vercel.json`.
 
-## Tech Stack
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push
 
-- **Frontend**: Next.js 14, TypeScript, TailwindCSS, React Dropzone
-- **Backend**: FastAPI, Python 3.11
-- **Image Processing**: rembg, Pillow
-- **AI Generation**: Replicate FLUX (with gradient fallback)
-- **Canvas**: HTML5 Canvas for preview and export
-
-## Keyboard Shortcuts
-
-- `R` - Remove background
-- `G` - Open prompt modal
-- `Ctrl/Cmd + D` - Download PNG
+### Other Platforms
+- **Netlify**: Use `npm run build` and deploy the `.next` folder
+- **Railway**: Use the included configuration
+- **Docker**: Create a Dockerfile for containerized deployment
 
 ## Project Structure
 
 ```
-apps/
-├── web/                 # Next.js frontend
-│   ├── app/            # Single page app
-│   ├── components/     # React components
-│   └── lib/           # API client
-└── api/               # FastAPI backend
-    ├── routers/       # API endpoints
-    └── services/      # Business logic
+├── app/                 # Next.js app directory
+│   ├── api/            # API routes
+│   ├── about/          # About page
+│   ├── blog/           # Blog pages
+│   └── ...
+├── components/         # Reusable React components
+├── lib/               # Utility functions
+└── prisma/            # Database schema
 ```
-
-## Environment Variables
-
-### Frontend
-- `NEXT_PUBLIC_API_BASE` - Backend API URL
-
-### Backend
-- `REPLICATE_API_TOKEN` - Replicate API token (optional)
-- `FLUX_MODEL` - FLUX model name
-- `USE_END_TO_END_POSTER` - Enable end-to-end generation mode
-- `CORS_ORIGINS` - Allowed CORS origins
 
 ## Development
 
-```bash
-# Start both servers
-npm run dev
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
 
-# Start frontend only
-npm run dev:web
+## Features
 
-# Start backend only
-npm run dev:api
-
-# Build for production
-npm run build
-```
-
-## License
-
-MIT
+- **Background Removal**: AI-powered background removal tool
+- **AI Banner Generator**: Generate banners with AI
+- **Blog System**: Content management and blog posts
+- **Authentication**: User authentication and management
+- **Responsive Design**: Mobile-first responsive design"# Automated deployment test - $(Get-Date)" 
