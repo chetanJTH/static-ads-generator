@@ -47,19 +47,14 @@ jobs:
         # Add your backend tests here if you have them
         echo "Backend tests would run here"
 
-    - name: 🔐 Setup SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
     - name: 🚀 Deploy to DigitalOcean
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       run: |
-        # Add server to known hosts
-        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+        # Install sshpass for password authentication
+        sudo apt-get update && sudo apt-get install -y sshpass
         
-        # Deploy to server
-        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
+        # Deploy to server using password authentication
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
           cd /opt/hosting/kraftey-static-ads
           
           echo "📥 Pulling latest code from Git..."
@@ -89,7 +84,7 @@ jobs:
     - name: 📊 Deployment Status
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       run: |
-        ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
           echo "📊 PM2 Status:"
           pm2 status
           
