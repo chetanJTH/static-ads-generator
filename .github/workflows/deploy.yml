@@ -59,7 +59,7 @@ jobs:
         ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
         
         # Deploy to server
-        ssh ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
           cd /home/ubuntu/static-ads-generator
           
           echo "📥 Pulling latest code from Git..."
@@ -95,7 +95,7 @@ jobs:
     - name: 📊 Deployment Status
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       run: |
-        ssh ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SERVER_HOST }} << 'EOF'
           echo "📊 PM2 Status:"
           pm2 status
           
