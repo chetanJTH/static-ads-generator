@@ -15,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import routers
-from routers import remove_bg, design_card, health
+from routers import remove_bg, design_card, health, cutout
 
 # Get environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
@@ -72,6 +72,7 @@ app.add_middleware(
 app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(remove_bg.router, prefix="/remove-bg", tags=["remove-bg"])
 app.include_router(design_card.router, prefix="/design-card", tags=["design-card"])
+app.include_router(cutout.router, prefix="/cutout", tags=["cutout"])
 
 @app.get("/")
 async def root():
