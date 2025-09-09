@@ -1,0 +1,181 @@
+name: Deploy to Digital Ocean (No Docker)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run linter
+      run: npm run lint
+      
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_BASE: ${{ secrets.NEXT_PUBLIC_API_BASE }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      env:
+        NODE_ENV: production
+        NEXT_PUBLIC_API_BASE: ${{ secrets.NEXT_PUBLIC_API_BASE }}
+        NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+        NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        
+    - name: Create deployment package
+      run: |
+        mkdir -p deployment
+        cp -r .next deployment/
+        cp -r public deployment/
+        cp -r node_modules deployment/
+        cp package.json deployment/
+        cp package-lock.json deployment/
+        cp next.config.js deployment/
+        cp -r prisma deployment/ 2>/dev/null || true
+        cp -r lib deployment/ 2>/dev/null || true
+        cp -r components deployment/ 2>/dev/null || true
+        cp -r app deployment/
+        
+    - name: Create production environment file
+      run: |
+        cat > deployment/.env.production << EOF
+        NODE_ENV=production
+        NEXT_PUBLIC_API_BASE=${{ secrets.NEXT_PUBLIC_API_BASE }}
+        NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}
+        NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+        DATABASE_URL=${{ secrets.DATABASE_URL }}
+        GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+        GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+        NEXT_PUBLIC_APP_NAME=${{ secrets.NEXT_PUBLIC_APP_NAME }}
+        NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}
+        EOF
+        
+    - name: Create deployment archive
+      run: |
+        cd deployment
+        tar -czf ../deployment.tar.gz .
+        cd ..
+        
+    - name: Deploy to Digital Ocean
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.DO_HOST }}
+        username: ${{ secrets.DO_USERNAME }}
+        key: ${{ secrets.DO_SSH_KEY }}
+        script: |
+          # Create application directory
+          sudo mkdir -p /opt/static-ads-frontend
+          sudo chown $USER:$USER /opt/static-ads-frontend
+          
+          # Stop existing application
+          sudo systemctl stop static-ads-frontend || true
+          
+          # Backup current deployment
+          if [ -d "/opt/static-ads-frontend/current" ]; then
+            sudo mv /opt/static-ads-frontend/current /opt/static-ads-frontend/backup-$(date +%Y%m%d-%H%M%S)
+          fi
+          
+          # Create new deployment directory
+          mkdir -p /opt/static-ads-frontend/current
+          
+    - name: Upload and extract deployment
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.DO_HOST }}
+        username: ${{ secrets.DO_USERNAME }}
+        key: ${{ secrets.DO_SSH_KEY }}
+        source: "deployment.tar.gz"
+        target: "/opt/static-ads-frontend/"
+        
+    - name: Finalize deployment
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.DO_HOST }}
+        username: ${{ secrets.DO_USERNAME }}
+        key: ${{ secrets.DO_SSH_KEY }}
+        script: |
+          cd /opt/static-ads-frontend
+          
+          # Extract new deployment
+          tar -xzf deployment.tar.gz -C current/
+          rm deployment.tar.gz
+          
+          # Set proper permissions
+          sudo chown -R $USER:$USER current/
+          chmod +x current/package.json
+          
+          # Install production dependencies
+          cd current
+          npm ci --only=production
+          
+          # Run database migrations if needed
+          if [ -f "prisma/schema.prisma" ]; then
+            npx prisma generate
+            npx prisma migrate deploy || true
+          fi
+          
+          # Start the application
+          sudo systemctl start static-ads-frontend
+          sudo systemctl enable static-ads-frontend
+          
+          # Wait for application to start
+          sleep 10
+          
+          # Check if application is running
+          if curl -f http://localhost:3000/api/health > /dev/null 2>&1; then
+            echo "✅ Deployment successful!"
+            # Clean up old backups (keep last 3)
+            ls -t /opt/static-ads-frontend/backup-* 2>/dev/null | tail -n +4 | xargs -r rm -rf
+          else
+            echo "❌ Deployment failed! Rolling back..."
+            # Rollback to previous version
+            if [ -d "/opt/static-ads-frontend/backup-$(ls -t /opt/static-ads-frontend/backup-* 2>/dev/null | head -1 | cut -d'-' -f2-)" ]; then
+              sudo systemctl stop static-ads-frontend
+              sudo rm -rf /opt/static-ads-frontend/current
+              sudo mv /opt/static-ads-frontend/backup-$(ls -t /opt/static-ads-frontend/backup-* 2>/dev/null | head -1 | cut -d'-' -f2-) /opt/static-ads-frontend/current
+              sudo systemctl start static-ads-frontend
+            fi
+            exit 1
+          fi
