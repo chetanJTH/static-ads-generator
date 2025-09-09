@@ -54,7 +54,7 @@ jobs:
         sudo apt-get update && sudo apt-get install -y sshpass
         
         # Deploy to server using password authentication
-        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
           cd /opt/hosting/kraftey-static-ads
           
           echo "📥 Pulling latest code from Git..."
@@ -84,7 +84,7 @@ jobs:
     - name: 📊 Deployment Status
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       run: |
-        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_HOST }} << 'EOF'
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
           echo "📊 PM2 Status:"
           pm2 status
           
