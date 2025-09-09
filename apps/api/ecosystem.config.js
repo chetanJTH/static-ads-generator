@@ -1,7 +1,8 @@
 module.exports = {
   apps: [{
     name: 'static-ads-backend',
-    script: 'main.py',
+    script: 'uvicorn',
+    args: 'main:app --host 0.0.0.0 --port 8000 --workers 1',
     interpreter: 'python3',
     cwd: '/root/static-ads-generator/apps/api',
     instances: 1,
@@ -9,10 +10,10 @@ module.exports = {
     watch: false,
     max_memory_restart: '1G',
     env: {
-      NODE_ENV: 'development'
+      ENVIRONMENT: 'development'
     },
     env_production: {
-      NODE_ENV: 'production',
+      ENVIRONMENT: 'production',
       PORT: 8000,
       HOST: '0.0.0.0'
     },
