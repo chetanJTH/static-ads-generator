@@ -55,15 +55,12 @@ jobs:
         
         # Deploy to server using password authentication
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
-          cd /opt/hosting/kraftey-static-ads
-          
-          echo "📥 Pulling latest code from Git..."
-          git pull origin main
-          
           echo "🔧 Setting up backend..."
           cd /opt/hosting/kraftey-static-ads-backend
-          source venv/bin/activate
-          pip install -r requirements.txt
+          if [ -f "venv/bin/activate" ]; then
+            source venv/bin/activate
+            pip install -r requirements.txt
+          fi
           
           echo "🎨 Setting up frontend..."
           cd /opt/hosting/kraftey-static-ads
