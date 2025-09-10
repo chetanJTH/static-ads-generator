@@ -1,17 +1,14 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000'
-
 export interface RemoveBgResponse {
   png_base64: string
 }
-
-
 
 export const api = {
   async removeBg(file: File): Promise<RemoveBgResponse> {
     const formData = new FormData()
     formData.append('file', file)
 
-    const response = await fetch(`${API_BASE}/remove-bg`, {
+    // Use Next.js rewrites instead of direct backend calls
+    const response = await fetch('/api/remove-bg', {
       method: 'POST',
       body: formData,
     })
@@ -24,10 +21,9 @@ export const api = {
     return response.json()
   },
 
-
-
   async health(): Promise<{ ok: boolean }> {
-    const response = await fetch(`${API_BASE}/health`)
+    // Use Next.js rewrites instead of direct backend calls
+    const response = await fetch('/api/health')
     return response.json()
   },
 }
