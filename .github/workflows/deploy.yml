@@ -27,22 +27,25 @@ jobs:
         python-version: '3.9'
 
     - name: 📦 Install frontend dependencies
+      working-directory: ./apps/frontend
       run: npm ci
 
     - name: 🧪 Run frontend tests
+      working-directory: ./apps/frontend
       run: npm run lint
 
     - name: 🏗️ Build frontend
+      working-directory: ./apps/frontend
       run: npm run build
 
     - name: 📦 Install backend dependencies
-      working-directory: ./apps/api
+      working-directory: ./apps/backend
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
     - name: 🧪 Run backend tests
-      working-directory: ./apps/api
+      working-directory: ./apps/backend
       run: |
         # Add your backend tests here if you have them
         echo "Backend tests would run here"
@@ -55,32 +58,29 @@ jobs:
         
         # Deploy to server using password authentication
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
-          echo "🚀 Starting deployment..."
+          echo "🚀 Starting monorepo deployment..."
           
           # Update PM2 to latest version
           pm2 update
           
-          echo "🔧 Setting up backend..."
-          cd /opt/hosting/kraftey-static-ads-backend
+          # Navigate to monorepo directory
+          cd /opt/hosting/static-ads-generator
           
-          # Check if virtual environment exists
-          if [ -d "venv" ]; then
-            echo "📦 Activating virtual environment..."
-            source venv/bin/activate
-            pip install -r requirements.txt
-          else
-            echo "⚠️ No virtual environment found, installing dependencies globally..."
-            pip3 install -r requirements.txt
-          fi
+          echo "📦 Installing frontend dependencies..."
+          cd apps/frontend
+          npm ci --production
           
-          echo "🎨 Setting up frontend..."
-          cd /opt/hosting/kraftey-static-ads
-          npm ci
+          echo "📦 Installing backend dependencies..."
+          cd ../backend
+          pip3 install -r requirements.txt
+          
+          echo "🏗️ Building frontend..."
+          cd ../frontend
           npm run build
           
           echo "🔄 Restarting applications with PM2..."
-          pm2 restart next-static-ads
-          pm2 restart static-ads-generator-backend
+          cd /opt/hosting/static-ads-generator
+          pm2 restart ecosystem.config.js
           
           # Save PM2 configuration
           pm2 save
@@ -89,7 +89,7 @@ jobs:
           echo "📊 Final PM2 Status:"
           pm2 status
           
-          echo "✅ Deployment complete!"
+          echo "✅ Monorepo deployment complete!"
           echo "🌐 Frontend: https://kraftey.com"
           echo "🌐 Backend: https://staticapi.kraftey.com"
         EOF
