@@ -68,7 +68,7 @@ jobs:
           
           # Navigate to monorepo directory
           cd /opt/hosting/static-ads-generator
-EOF
+        EOF
 
         # Copy the entire project to server
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' scp -r -o StrictHostKeyChecking=no . root@${{ secrets.SERVER_HOST }}:/opt/hosting/static-ads-generator/
