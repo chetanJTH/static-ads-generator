@@ -38,6 +38,10 @@ STORAGE_DIR=./uploads
 LOG_LEVEL=INFO
 USE_END_TO_END_POSTER=false
 EOF
+
+# Verify files were created
+ls -la apps/frontend/.env.production
+ls -la apps/backend/.env
 ```
 
 ### **Step 3: Install Dependencies and Build**

@@ -12,7 +12,8 @@ build/
 # Environment variables
 .env
 .env*.local
-.env.production
+# .env.production  # Allow production env files for deployment
+!apps/backend/.env  # Allow backend env file for deployment
 
 # Vercel
 .vercel

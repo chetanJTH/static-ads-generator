@@ -63,6 +63,20 @@ jobs:
           # Update PM2 to latest version
           pm2 update
           
+          # Create deployment directory
+          mkdir -p /opt/hosting/static-ads-generator
+          
+          # Navigate to monorepo directory
+          cd /opt/hosting/static-ads-generator
+EOF
+
+        # Copy the entire project to server
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' scp -r -o StrictHostKeyChecking=no . root@${{ secrets.SERVER_HOST }}:/opt/hosting/static-ads-generator/
+
+        # Continue with server setup
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
+          echo "📁 Code copied to server, setting up..."
+          
           # Navigate to monorepo directory
           cd /opt/hosting/static-ads-generator
           
