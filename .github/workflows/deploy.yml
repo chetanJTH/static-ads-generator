@@ -60,8 +60,26 @@ jobs:
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
           echo "🚀 Starting monorepo deployment..."
           
-          # Update PM2 to latest version
-          pm2 update
+          # Install Node.js and PM2 if not already installed
+          if ! command -v node &> /dev/null; then
+            echo "📦 Installing Node.js..."
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            apt-get install -y nodejs
+          fi
+          
+          if ! command -v pm2 &> /dev/null; then
+            echo "📦 Installing PM2..."
+            npm install -g pm2
+          else
+            echo "🔄 Updating PM2..."
+            pm2 update
+          fi
+          
+          # Install Python and pip if not already installed
+          if ! command -v python3 &> /dev/null; then
+            echo "📦 Installing Python3..."
+            apt-get install -y python3 python3-pip
+          fi
           
           # Create deployment directory
           mkdir -p /opt/hosting/static-ads-generator
