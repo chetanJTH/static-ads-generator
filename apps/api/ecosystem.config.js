@@ -3,7 +3,7 @@ module.exports = {
     name: 'static-ads-backend',
     script: 'uvicorn',
     args: 'main:app --host 0.0.0.0 --port 8000 --workers 1',
-    interpreter: 'python3',
+    interpreter: '/root/static-ads-generator/apps/api/venv/bin/python',
     cwd: '/root/static-ads-generator/apps/api',
     instances: 1,
     autorestart: true,
