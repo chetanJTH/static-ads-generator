@@ -1,0 +1,10 @@
+# ads.txt for kraftey.com
+# This file is used to authorize digital sellers to sell your inventory
+
+# Google AdSense
+google.com, pub-9525032831778850, DIRECT, f08c47fec0942fa0
+
+# Add more ad networks as needed
+# Format: domain, publisher_id, relationship, certification_authority_id
+
+# For more information, visit: https://iabtechlab.com/ads-txt/
