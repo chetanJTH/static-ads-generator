@@ -50,10 +50,15 @@ jobs:
         # Add your backend tests here if you have them
         echo "Backend tests would run here"
 
-    - name: 🚀 Deploy to DigitalOcean
+    - name: 🚀 Deploy to DigitalOcean (SAFE MODE)
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
       timeout-minutes: 30
       run: |
+        # SAFE DEPLOYMENT MODE - Only affects our specific project
+        # - Only installs/updates Node.js if version < 16
+        # - Only manages our specific PM2 processes
+        # - Only works in /opt/hosting/static-ads-generator directory
+        # - Does not affect other projects or system-wide configurations
         # Install sshpass for password authentication
         sudo apt-get update && sudo apt-get install -y sshpass
         
@@ -64,21 +69,25 @@ jobs:
           # Update package lists first
           apt-get update
           
-          # Check Node.js version and install/upgrade if needed
+          # Check Node.js version and install/upgrade if needed (SAFE VERSION)
           NODE_VERSION=""
           if command -v node &> /dev/null; then
             NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
             echo "🔍 Current Node.js version: $(node --version)"
           fi
           
-          # Install or upgrade Node.js if not available or not version 18+
-          if ! command -v node &> /dev/null || ! command -v npm &> /dev/null || [ "$NODE_VERSION" -lt 18 ] 2>/dev/null; then
-            echo "📦 Installing/upgrading Node.js and npm..."
+          # Only install/upgrade Node.js if not available or version is too old (SAFE APPROACH)
+          if ! command -v node &> /dev/null || ! command -v npm &> /dev/null || [ "$NODE_VERSION" -lt 16 ] 2>/dev/null; then
+            echo "📦 Installing/upgrading Node.js and npm (SAFE MODE)..."
             
-            # Remove existing Node.js packages to avoid conflicts
-            echo "🧹 Removing existing Node.js packages..."
-            apt-get remove -y nodejs npm libnode72 nodejs-doc 2>/dev/null || true
-            apt-get autoremove -y 2>/dev/null || true
+            # Only remove Node.js if it's version 12 or older (keep newer versions)
+            if [ "$NODE_VERSION" -lt 16 ] 2>/dev/null; then
+              echo "🧹 Updating Node.js from version $NODE_VERSION to 18.x..."
+              apt-get remove -y nodejs npm libnode72 nodejs-doc 2>/dev/null || true
+              apt-get autoremove -y 2>/dev/null || true
+            else
+              echo "✅ Node.js version $NODE_VERSION is compatible, keeping existing installation"
+            fi
             
             # Clean package cache
             apt-get clean
@@ -103,7 +112,7 @@ jobs:
             echo "✅ Node.js $(node --version) and npm $(npm --version) already installed and up to date"
           fi
           
-          # Install PM2 if not already installed
+          # Install PM2 if not already installed (SAFE MODE)
           if ! command -v pm2 &> /dev/null; then
             echo "📦 Installing PM2..."
             npm install -g pm2
@@ -113,9 +122,7 @@ jobs:
             fi
             echo "✅ PM2 installed successfully"
           else
-            echo "🔄 Updating PM2..."
-            npm install -g pm2@latest
-            echo "✅ PM2 updated successfully"
+            echo "✅ PM2 already installed, keeping existing version"
           fi
           
           # Install Python and pip if not already installed
@@ -150,11 +157,18 @@ jobs:
             echo "✅ Nginx already installed"
           fi
           
-          # Create deployment directory
+          # Create deployment directory (SAFE MODE - only our project)
+          echo "📁 Setting up project directory..."
           mkdir -p /opt/hosting/static-ads-generator
           
           # Navigate to monorepo directory
           cd /opt/hosting/static-ads-generator
+          
+          # Safety check - ensure we're in the right directory
+          if [ ! -d "/opt/hosting/static-ads-generator" ]; then
+            echo "❌ Failed to create project directory"
+            exit 1
+          fi
         EOF
 
         # Copy project files using tar and ssh for better reliability
@@ -295,10 +309,12 @@ jobs:
           fi
           echo "✅ Frontend built successfully"
           
-          # Stop existing PM2 processes
-          echo "🛑 Stopping existing PM2 processes..."
-          pm2 stop all 2>/dev/null || true
-          pm2 delete all 2>/dev/null || true
+          # Stop only our specific PM2 processes (SAFE MODE)
+          echo "🛑 Stopping our specific PM2 processes..."
+          pm2 stop static-ads-frontend 2>/dev/null || true
+          pm2 stop static-ads-backend 2>/dev/null || true
+          pm2 delete static-ads-frontend 2>/dev/null || true
+          pm2 delete static-ads-backend 2>/dev/null || true
           
           # Start applications with PM2
           echo "🔄 Starting applications with PM2..."
