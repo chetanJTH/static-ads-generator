@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000'
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE || 'https://staticapi.kraftey.com'
     
     // Check backend health
     const backendHealth = await fetch(`${apiBase}/health/detailed`, {
