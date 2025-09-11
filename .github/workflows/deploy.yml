@@ -60,25 +60,66 @@ jobs:
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
           echo "🚀 Starting monorepo deployment..."
           
-          # Install Node.js and PM2 if not already installed
-          if ! command -v node &> /dev/null; then
-            echo "📦 Installing Node.js..."
-            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          # Update package lists first
+          apt-get update
+          
+          # Install Node.js and npm if not already installed
+          if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+            echo "📦 Installing Node.js and npm..."
+            curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
             apt-get install -y nodejs
+            
+            # Verify installation
+            if ! command -v node &> /dev/null; then
+              echo "❌ Node.js installation failed!"
+              exit 1
+            fi
+            
+            if ! command -v npm &> /dev/null; then
+              echo "❌ npm installation failed!"
+              exit 1
+            fi
+            
+            echo "✅ Node.js $(node --version) and npm $(npm --version) installed successfully"
+          else
+            echo "✅ Node.js $(node --version) and npm $(npm --version) already installed"
           fi
           
+          # Install PM2 if not already installed
           if ! command -v pm2 &> /dev/null; then
             echo "📦 Installing PM2..."
             npm install -g pm2
+            if ! command -v pm2 &> /dev/null; then
+              echo "❌ PM2 installation failed!"
+              exit 1
+            fi
+            echo "✅ PM2 installed successfully"
           else
             echo "🔄 Updating PM2..."
-            pm2 update
+            npm install -g pm2@latest
+            echo "✅ PM2 updated successfully"
           fi
           
           # Install Python and pip if not already installed
           if ! command -v python3 &> /dev/null; then
             echo "📦 Installing Python3..."
-            apt-get install -y python3 python3-pip
+            apt-get install -y python3 python3-pip python3-venv
+            if ! command -v python3 &> /dev/null; then
+              echo "❌ Python3 installation failed!"
+              exit 1
+            fi
+            echo "✅ Python3 $(python3 --version) installed successfully"
+          else
+            echo "✅ Python3 $(python3 --version) already installed"
+          fi
+          
+          # Install curl for health checks
+          if ! command -v curl &> /dev/null; then
+            echo "📦 Installing curl..."
+            apt-get install -y curl
+            echo "✅ curl installed successfully"
+          else
+            echo "✅ curl already installed"
           fi
           
           # Create deployment directory
@@ -98,21 +139,76 @@ jobs:
           # Navigate to monorepo directory
           cd /opt/hosting/static-ads-generator
           
+          # Verify we have the required tools
+          if ! command -v npm &> /dev/null; then
+            echo "❌ npm not found! Cannot proceed with frontend setup."
+            exit 1
+          fi
+          
+          if ! command -v python3 &> /dev/null; then
+            echo "❌ python3 not found! Cannot proceed with backend setup."
+            exit 1
+          fi
+          
+          # Install frontend dependencies
           echo "📦 Installing frontend dependencies..."
           cd apps/frontend
-          npm ci --production
+          if [ -f package.json ]; then
+            npm ci --production
+            if [ $? -ne 0 ]; then
+              echo "❌ Frontend dependency installation failed!"
+              exit 1
+            fi
+            echo "✅ Frontend dependencies installed successfully"
+          else
+            echo "❌ package.json not found in frontend directory!"
+            exit 1
+          fi
           
+          # Install backend dependencies
           echo "📦 Installing backend dependencies..."
           cd ../backend
-          pip3 install -r requirements.txt
+          if [ -f requirements.txt ]; then
+            pip3 install -r requirements.txt
+            if [ $? -ne 0 ]; then
+              echo "❌ Backend dependency installation failed!"
+              exit 1
+            fi
+            echo "✅ Backend dependencies installed successfully"
+          else
+            echo "❌ requirements.txt not found in backend directory!"
+            exit 1
+          fi
           
+          # Build frontend
           echo "🏗️ Building frontend..."
           cd ../frontend
           npm run build
+          if [ $? -ne 0 ]; then
+            echo "❌ Frontend build failed!"
+            exit 1
+          fi
+          echo "✅ Frontend built successfully"
           
-          echo "🔄 Restarting applications with PM2..."
+          # Stop existing PM2 processes
+          echo "🛑 Stopping existing PM2 processes..."
+          pm2 stop all 2>/dev/null || true
+          pm2 delete all 2>/dev/null || true
+          
+          # Start applications with PM2
+          echo "🔄 Starting applications with PM2..."
           cd /opt/hosting/static-ads-generator
-          pm2 restart ecosystem.config.js
+          if [ -f ecosystem.config.js ]; then
+            pm2 start ecosystem.config.js
+            if [ $? -ne 0 ]; then
+              echo "❌ PM2 start failed!"
+              exit 1
+            fi
+            echo "✅ Applications started with PM2"
+          else
+            echo "❌ ecosystem.config.js not found!"
+            exit 1
+          fi
           
           # Save PM2 configuration
           pm2 save
@@ -120,6 +216,23 @@ jobs:
           # Show final status
           echo "📊 Final PM2 Status:"
           pm2 status
+          
+          # Wait a moment for services to start
+          sleep 5
+          
+          # Basic health check
+          echo "🏥 Performing basic health checks..."
+          if curl -f http://localhost:3000 >/dev/null 2>&1; then
+            echo "✅ Frontend is responding on port 3000"
+          else
+            echo "⚠️ Frontend may not be responding on port 3000"
+          fi
+          
+          if curl -f http://localhost:8000/health >/dev/null 2>&1; then
+            echo "✅ Backend is responding on port 8000"
+          else
+            echo "⚠️ Backend may not be responding on port 8000"
+          fi
           
           echo "✅ Monorepo deployment complete!"
           echo "🌐 Frontend: https://kraftey.com"
