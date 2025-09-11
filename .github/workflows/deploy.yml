@@ -63,9 +63,26 @@ jobs:
           # Update package lists first
           apt-get update
           
-          # Install Node.js and npm if not already installed
-          if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
-            echo "📦 Installing Node.js and npm..."
+          # Check Node.js version and install/upgrade if needed
+          NODE_VERSION=""
+          if command -v node &> /dev/null; then
+            NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
+            echo "🔍 Current Node.js version: $(node --version)"
+          fi
+          
+          # Install or upgrade Node.js if not available or not version 18+
+          if ! command -v node &> /dev/null || ! command -v npm &> /dev/null || [ "$NODE_VERSION" -lt 18 ] 2>/dev/null; then
+            echo "📦 Installing/upgrading Node.js and npm..."
+            
+            # Remove existing Node.js packages to avoid conflicts
+            echo "🧹 Removing existing Node.js packages..."
+            apt-get remove -y nodejs npm libnode72 nodejs-doc 2>/dev/null || true
+            apt-get autoremove -y 2>/dev/null || true
+            
+            # Clean package cache
+            apt-get clean
+            
+            # Install Node.js 18.x from NodeSource
             curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
             apt-get install -y nodejs
             
@@ -82,7 +99,7 @@ jobs:
             
             echo "✅ Node.js $(node --version) and npm $(npm --version) installed successfully"
           else
-            echo "✅ Node.js $(node --version) and npm $(npm --version) already installed"
+            echo "✅ Node.js $(node --version) and npm $(npm --version) already installed and up to date"
           fi
           
           # Install PM2 if not already installed
