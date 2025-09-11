@@ -146,8 +146,60 @@ jobs:
           cd /opt/hosting/static-ads-generator
         EOF
 
-        # Copy the entire project to server
-        sshpass -p '${{ secrets.SERVER_PASSWORD }}' scp -r -o StrictHostKeyChecking=no . root@${{ secrets.SERVER_HOST }}:/opt/hosting/static-ads-generator/
+        # Copy the entire project to server with improved scp
+        echo "📁 Copying project files to server..."
+        
+        # Create a temporary directory with only necessary files
+        mkdir -p /tmp/deploy-files
+        cp -r . /tmp/deploy-files/
+        cd /tmp/deploy-files
+        
+        # Remove unnecessary files to speed up transfer
+        rm -rf node_modules/ .git/ .next/ dist/ build/ out/ coverage/ .nyc_output/ .cache/ .turbo/ || true
+        find . -name "*.log" -delete || true
+        find . -name "*.tmp" -delete || true
+        find . -name ".DS_Store" -delete || true
+        find . -name "Thumbs.db" -delete || true
+        
+        # Copy with improved scp settings
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' scp -r -o StrictHostKeyChecking=no -o ConnectTimeout=60 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o Compression=yes . root@${{ secrets.SERVER_HOST }}:/opt/hosting/static-ads-generator/
+        
+        # Clean up temporary directory
+        cd /tmp && rm -rf deploy-files
+        
+        # Verify the copy was successful
+        echo "🔍 Verifying file transfer..."
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'VERIFY_EOF'
+          if [ -f "/opt/hosting/static-ads-generator/package.json" ]; then
+            echo "✅ Root package.json found"
+          else
+            echo "❌ Root package.json not found - file transfer may have failed"
+            exit 1
+          fi
+          
+          if [ -f "/opt/hosting/static-ads-generator/apps/frontend/package.json" ]; then
+            echo "✅ Frontend package.json found"
+          else
+            echo "❌ Frontend package.json not found - file transfer may have failed"
+            exit 1
+          fi
+          
+          if [ -f "/opt/hosting/static-ads-generator/apps/backend/requirements.txt" ]; then
+            echo "✅ Backend requirements.txt found"
+          else
+            echo "❌ Backend requirements.txt not found - file transfer may have failed"
+            exit 1
+          fi
+          
+          if [ -f "/opt/hosting/static-ads-generator/ecosystem.config.js" ]; then
+            echo "✅ ecosystem.config.js found"
+          else
+            echo "❌ ecosystem.config.js not found - file transfer may have failed"
+            exit 1
+          fi
+          
+          echo "✅ File transfer verification completed successfully"
+        VERIFY_EOF
 
         # Continue with server setup
         sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EOF'
