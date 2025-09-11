@@ -5,13 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/', '/admin/'],
+      disallow: ['/admin/', '/api/', '/_next/', '/private/'],
     },
     sitemap: 'https://kraftey.com/sitemap.xml',
   }
 }
-
-
-
-
-

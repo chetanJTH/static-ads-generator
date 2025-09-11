@@ -1,0 +1,20 @@
+# app-ads.txt for kraftey.com
+# This file is used to authorize digital sellers to sell your app's inventory
+
+# Google AdMob (if you use it)
+# google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
+
+# Facebook Audience Network (if you use it)
+# facebook.com, 123456789012345, DIRECT, c3e20eee3f780d68
+
+# Unity Ads (if you use it)
+# unity3d.com, 1234567, DIRECT, 96e28b8ea4cd3876
+
+# Add your ad network entries here
+# Format: domain, publisher_id, relationship, certification_authority_id
+
+# Example entries (replace with your actual ad network IDs):
+# google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0
+# facebook.com, 123456789012345, DIRECT, c3e20eee3f780d68
+
+# For more information, visit: https://iabtechlab.com/ads-txt/

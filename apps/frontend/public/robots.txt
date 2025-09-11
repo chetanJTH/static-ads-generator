@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://kraftey.com/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /private/
+
+# Allow important pages
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /pricing
+Allow: /remove-background
+Allow: /ai-banner-generator
+Allow: /blog
+Allow: /blog/*
+
+# Crawl delay (optional)
+Crawl-delay: 1
