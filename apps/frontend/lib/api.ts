@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-// Use local API routes for production to avoid mixed content issues
-const API_BASE = process.env.NODE_ENV === 'production' ? '' : (process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000')
+// Use HTTPS backend directly since SSL is now configured
+const API_BASE = process.env.NODE_ENV === 'production' ? 'https://staticapi.kraftey.com' : (process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000')
 
 export interface RemoveBgResponse {
   png_base64: string
@@ -13,7 +13,7 @@ export const api = {
     formData.append('file', file)
 
     try {
-      const response = await axios.post(`${API_BASE}/api/remove-bg`, formData, {
+      const response = await axios.post(`${API_BASE}/remove-bg/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -30,7 +30,7 @@ export const api = {
 
   async health(): Promise<{ ok: boolean }> {
     try {
-      const response = await axios.get(`${API_BASE}/api/health`)
+      const response = await axios.get(`${API_BASE}/health/`)
       return response.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
