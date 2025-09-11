@@ -140,6 +140,16 @@ jobs:
             echo "✅ curl already installed"
           fi
           
+          # Install Nginx for SSL proxy
+          if ! command -v nginx &> /dev/null; then
+            echo "📦 Installing Nginx..."
+            apt-get install -y nginx
+            systemctl enable nginx
+            echo "✅ Nginx installed successfully"
+          else
+            echo "✅ Nginx already installed"
+          fi
+          
           # Create deployment directory
           mkdir -p /opt/hosting/static-ads-generator
           
@@ -332,6 +342,12 @@ jobs:
           echo "✅ Monorepo deployment complete!"
           echo "🌐 Frontend: https://kraftey.com"
           echo "🌐 Backend: https://staticapi.kraftey.com"
+          
+          # Setup SSL for backend (optional - uncomment if you want automatic SSL setup)
+          # echo "🔐 Setting up SSL for backend..."
+          # cd /opt/hosting/static-ads-generator
+          # chmod +x scripts/setup-ssl.sh
+          # ./scripts/setup-ssl.sh
         EOF
 
 
