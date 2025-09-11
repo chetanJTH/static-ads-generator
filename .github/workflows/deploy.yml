@@ -52,6 +52,7 @@ jobs:
 
     - name: 🚀 Deploy to DigitalOcean
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      timeout-minutes: 30
       run: |
         # Install sshpass for password authentication
         sudo apt-get update && sudo apt-get install -y sshpass
@@ -146,26 +147,51 @@ jobs:
           cd /opt/hosting/static-ads-generator
         EOF
 
-        # Copy the entire project to server with improved scp
+        # Copy project files using tar and ssh for better reliability
         echo "📁 Copying project files to server..."
         
-        # Create a temporary directory with only necessary files
-        mkdir -p /tmp/deploy-files
-        cp -r . /tmp/deploy-files/
-        cd /tmp/deploy-files
+        # Create a clean archive of the project
+        echo "📦 Creating project archive..."
+        tar --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='.next' \
+            --exclude='dist' \
+            --exclude='build' \
+            --exclude='out' \
+            --exclude='coverage' \
+            --exclude='.nyc_output' \
+            --exclude='.cache' \
+            --exclude='.turbo' \
+            --exclude='*.log' \
+            --exclude='*.tmp' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            --exclude='.env*' \
+            -czf /tmp/project.tar.gz .
         
-        # Remove unnecessary files to speed up transfer
-        rm -rf node_modules/ .git/ .next/ dist/ build/ out/ coverage/ .nyc_output/ .cache/ .turbo/ || true
-        find . -name "*.log" -delete || true
-        find . -name "*.tmp" -delete || true
-        find . -name ".DS_Store" -delete || true
-        find . -name "Thumbs.db" -delete || true
+        # Transfer the archive with progress
+        echo "🚀 Transferring project archive..."
+        echo "📊 Archive size: $(du -h /tmp/project.tar.gz | cut -f1)"
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' scp -v -o StrictHostKeyChecking=no -o ConnectTimeout=60 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 /tmp/project.tar.gz root@${{ secrets.SERVER_HOST }}:/tmp/
         
-        # Copy with improved scp settings
-        sshpass -p '${{ secrets.SERVER_PASSWORD }}' scp -r -o StrictHostKeyChecking=no -o ConnectTimeout=60 -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -o Compression=yes . root@${{ secrets.SERVER_HOST }}:/opt/hosting/static-ads-generator/
+        if [ $? -ne 0 ]; then
+          echo "❌ File transfer failed!"
+          exit 1
+        fi
+        echo "✅ Archive transferred successfully"
         
-        # Clean up temporary directory
-        cd /tmp && rm -rf deploy-files
+        # Extract the archive on the server
+        echo "📂 Extracting project files on server..."
+        sshpass -p '${{ secrets.SERVER_PASSWORD }}' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password root@${{ secrets.SERVER_HOST }} << 'EXTRACT_EOF'
+          echo "📂 Extracting project files..."
+          cd /opt/hosting/static-ads-generator
+          tar -xzf /tmp/project.tar.gz
+          rm -f /tmp/project.tar.gz
+          echo "✅ Project files extracted successfully"
+        EXTRACT_EOF
+        
+        # Clean up local archive
+        rm -f /tmp/project.tar.gz
         
         # Verify the copy was successful
         echo "🔍 Verifying file transfer..."
