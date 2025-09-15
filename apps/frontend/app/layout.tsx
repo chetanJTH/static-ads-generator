@@ -4,9 +4,9 @@ import Providers from '../components/Providers'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kraftey.com'),
-  title: 'Kraftey - AI Tools to Design, Edit & Create Faster',
-  description: 'Free AI-powered tools for creators: Remove backgrounds, generate banners, create videos, and write copy. Transform your content creation workflow with Kraftey.',
-  keywords: 'AI tools, background remover, banner generator, content creation, free AI, remove background online, AI banner maker',
+  title: 'Kraftey - Background Remove & AI Tools to Design, Edit & Create Faster',
+  description: 'Free AI background remove tool and creative suite: Remove backgrounds instantly, generate banners, create videos, and write copy. Transform your content creation workflow with Kraftey.',
+  keywords: 'background remove, AI background remover, remove background online, background remover free, AI tools, banner generator, content creation, free AI, AI banner maker, transparent background',
   authors: [{ name: 'Kraftey Team' }],
   creator: 'Kraftey',
   publisher: 'Kraftey',
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: 'https://kraftey.com',
     siteName: 'Kraftey',
-    title: 'Kraftey - AI Tools to Design, Edit & Create Faster',
-    description: 'Free AI-powered tools for creators: Remove backgrounds, generate banners, create videos, and write copy.',
+    title: 'Kraftey - Background Remove & AI Tools to Design, Edit & Create Faster',
+    description: 'Free AI background remove tool and creative suite: Remove backgrounds instantly, generate banners, create videos, and write copy.',
     images: [
       {
         url: 'https://kraftey.com/og-image.jpg',
@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Kraftey - AI Tools to Design, Edit & Create Faster',
-    description: 'Free AI-powered tools for creators: Remove backgrounds, generate banners, create videos, and write copy.',
+    title: 'Kraftey - Background Remove & AI Tools to Design, Edit & Create Faster',
+    description: 'Free AI background remove tool and creative suite: Remove backgrounds instantly, generate banners, create videos, and write copy.',
     images: ['https://kraftey.com/og-image.jpg'],
     creator: '@kraftey',
   },
@@ -55,7 +55,7 @@ export default function RootLayout({
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Kraftey',
-    description: 'Free AI-powered tools for creators: Remove backgrounds, generate banners, create videos, and write copy.',
+    description: 'Free AI background remove tool and creative suite: Remove backgrounds instantly, generate banners, create videos, and write copy.',
     url: 'https://kraftey.com',
     potentialAction: {
       '@type': 'SearchAction',
