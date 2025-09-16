@@ -72,7 +72,7 @@ app.add_middleware(
 app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(remove_bg.router, prefix="/remove-bg", tags=["remove-bg"])
 app.include_router(design_card.router, prefix="/design-card", tags=["design-card"])
-app.include_router(upscale.router, prefix="/upscale", tags=["image-upscale"])
+app.include_router(upscale.router, tags=["image-upscale"])
 
 @app.get("/")
 async def root():
