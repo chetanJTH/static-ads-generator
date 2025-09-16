@@ -20,6 +20,14 @@ const tools = [
     features: ['Instagram/Facebook ready', 'Custom prompts', 'Multiple formats', 'Brand consistency']
   },
   {
+    title: 'AI Image Upscaler',
+    description: 'Enhance image quality and resolution with AI-powered upscaling technology. 4x resolution increase.',
+    icon: '🔍',
+    href: '/image-upscaler',
+    status: 'Live',
+    features: ['4x upscaling', 'AI enhancement', 'Professional quality', 'Fast processing']
+  },
+  {
     title: 'AI Video Generator',
     description: 'Transform still images into engaging video ads for TikTok, Reels, and YouTube Shorts.',
     icon: '🎬',
