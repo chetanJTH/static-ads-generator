@@ -6,6 +6,38 @@ import Footer from '../../components/Footer'
 
 const blogPosts = [
   {
+    title: 'How to Optimize Images for Better SEO Rankings',
+    excerpt: '
+Introduction
+
+Understanding how to optimize images for better seo rankings is crucial for modern content creators and businesses looking to stay competitive in today's digital landscape.
+
+Key Concepts
+
+This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
+    category: 'Design',
+    readTime: '1 min read',
+    href: '/blog/how-to-optimize-images-for-better-seo-rankings',
+    image: '🎨',
+    date: 'September 16, 2025'
+  },
+{
+    title: 'How to Edit Images for Different Social Media Platforms',
+    excerpt: '
+Introduction
+
+Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today's digital landscape.
+
+Key Concepts
+
+This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
+    category: 'Photography',
+    readTime: '1 min read',
+    href: '/blog/how-to-edit-images-for-different-social-media-platforms',
+    image: '📸',
+    date: 'September 16, 2025'
+  },
+{
     title: 'Top 5 Free Online Tools to Remove Image Backgrounds (2025)',
     excerpt: 'Discover the best free tools for background removal, including AI-powered solutions and manual editing options. Learn which tools work best for different types of images and how to get professional results without spending money.',
     category: 'Tools',

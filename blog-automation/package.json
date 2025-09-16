@@ -1,0 +1,35 @@
+{
+  "name": "kraftey-blog-automation",
+  "version": "1.0.0",
+  "description": "Automated blog posting system for Kraftey with internal linking and daily scheduling",
+  "main": "blog-generator.js",
+  "scripts": {
+    "start": "node scheduler.js start",
+    "generate": "node scheduler.js now",
+    "status": "node scheduler.js status",
+    "test": "node blog-generator.js",
+    "install-deps": "npm install",
+    "setup": "npm install && node setup.js"
+  },
+  "keywords": [
+    "blog",
+    "automation",
+    "content-generation",
+    "scheduling",
+    "internal-linking",
+    "ai-tools"
+  ],
+  "author": "Kraftey Team",
+  "license": "MIT",
+  "dependencies": {
+    "node-cron": "^3.0.3"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chetanJTH/static-ads-generator"
+  }
+}
