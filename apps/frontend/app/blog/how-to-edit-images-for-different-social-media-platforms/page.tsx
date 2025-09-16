@@ -3,25 +3,11 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'How to Edit Images for Different Social Media Platforms | Kraftey Blog',
-  description: '
-Introduction
-
-Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today's digital landscape.
-
-Key Concepts
-
-This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
-  keywords: 'AI tools, background removal, photography, content creation, kraftey',
+  description: 'Learn how to edit images for different social media platforms. Complete guide covering optimal dimensions, formats, and editing techniques for Instagram, Facebook, Twitter, and more.',
+  keywords: 'social media images, image editing, Instagram dimensions, Facebook images, Twitter images, social media marketing, image optimization',
   openGraph: {
     title: 'How to Edit Images for Different Social Media Platforms',
-    description: '
-Introduction
-
-Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today's digital landscape.
-
-Key Concepts
-
-This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
+    description: 'Learn how to edit images for different social media platforms. Complete guide covering optimal dimensions, formats, and editing techniques.',
     type: 'article',
     publishedTime: '2025-09-16T07:49:30.180Z',
     authors: ['Kraftey Team'],
@@ -29,14 +15,7 @@ This comprehensive guide covers everything you need to know about implementing e
   twitter: {
     card: 'summary_large_image',
     title: 'How to Edit Images for Different Social Media Platforms',
-    description: '
-Introduction
-
-Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today's digital landscape.
-
-Key Concepts
-
-This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
+    description: 'Learn how to edit images for different social media platforms. Complete guide covering optimal dimensions, formats, and editing techniques.',
   }
 }
 
