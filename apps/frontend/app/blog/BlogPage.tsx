@@ -23,7 +23,7 @@ const blogPosts = [
     image: '📸',
     date: 'September 16, 2025'
   },
-{
+  {
     title: 'Top 5 Free Online Tools to Remove Image Backgrounds (2025)',
     excerpt: 'Discover the best free tools for background removal, including AI-powered solutions and manual editing options. Learn which tools work best for different types of images and how to get professional results without spending money.',
     category: 'Tools',
