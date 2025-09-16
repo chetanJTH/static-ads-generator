@@ -1,9 +1,16 @@
 from fastapi import APIRouter, HTTPException
 import os
-import psutil
 import time
 from datetime import datetime
 import sys
+
+# Make psutil optional
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+    print("Warning: psutil not available, using basic health checks")
 
 router = APIRouter()
 
@@ -22,30 +29,34 @@ async def detailed_health_check():
             "timestamp": datetime.utcnow().isoformat(),
             "environment": os.getenv("ENVIRONMENT", "unknown"),
             "python_version": sys.version,
-            "uptime_seconds": time.time() - psutil.boot_time(),
         }
         
-        # Memory usage
-        memory = psutil.virtual_memory()
-        system_info["memory"] = {
-            "total_gb": round(memory.total / (1024**3), 2),
-            "available_gb": round(memory.available / (1024**3), 2),
-            "used_percent": memory.percent
-        }
-        
-        # Disk usage
-        disk = psutil.disk_usage('/')
-        system_info["disk"] = {
-            "total_gb": round(disk.total / (1024**3), 2),
-            "free_gb": round(disk.free / (1024**3), 2),
-            "used_percent": round((disk.used / disk.total) * 100, 2)
-        }
-        
-        # CPU usage
-        system_info["cpu"] = {
-            "count": psutil.cpu_count(),
-            "usage_percent": psutil.cpu_percent(interval=1)
-        }
+        if PSUTIL_AVAILABLE:
+            system_info["uptime_seconds"] = time.time() - psutil.boot_time()
+            
+            # Memory usage
+            memory = psutil.virtual_memory()
+            system_info["memory"] = {
+                "total_gb": round(memory.total / (1024**3), 2),
+                "available_gb": round(memory.available / (1024**3), 2),
+                "used_percent": memory.percent
+            }
+            
+            # Disk usage
+            disk = psutil.disk_usage('/')
+            system_info["disk"] = {
+                "total_gb": round(disk.total / (1024**3), 2),
+                "free_gb": round(disk.free / (1024**3), 2),
+                "used_percent": round((disk.used / disk.total) * 100, 2)
+            }
+            
+            # CPU usage
+            system_info["cpu"] = {
+                "count": psutil.cpu_count(),
+                "usage_percent": psutil.cpu_percent(interval=1)
+            }
+        else:
+            system_info["psutil_available"] = False
         
         # Check if critical services are running
         system_info["services"] = {
