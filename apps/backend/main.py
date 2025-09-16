@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 import os
 import logging
 from dotenv import load_dotenv
@@ -15,7 +16,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import routers
-from routers import remove_bg, design_card, health, upscale
+from routers import remove_bg, design_card, health, upscale, upload
 
 # Get environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
@@ -32,7 +33,7 @@ app = FastAPI(
 if ENVIRONMENT == "production":
     cors_origins = os.getenv("CORS_ORIGINS", "https://kraftey.com,https://www.kraftey.com,https://staticapi.kraftey.com").split(",")
 else:
-    cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000,http://127.0.0.1:3001,https://kraftey.com,https://staticapi.kraftey.com").split(",")
+    cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3003,http://127.0.0.1:3000,http://127.0.0.1:3001,http://127.0.0.1:3002,https://kraftey.com,https://staticapi.kraftey.com").split(",")
 
 # Log CORS configuration for debugging
 logger.info(f"CORS Origins: {cors_origins}")
@@ -72,7 +73,15 @@ app.add_middleware(
 app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(remove_bg.router, prefix="/remove-bg", tags=["remove-bg"])
 app.include_router(design_card.router, prefix="/design-card", tags=["design-card"])
+app.include_router(upload.router, tags=["file-upload"])
 app.include_router(upscale.router, tags=["image-upscale"])
+
+# Mount static files for uploads
+import os
+uploads_dir = "uploads"
+if not os.path.exists(uploads_dir):
+    os.makedirs(uploads_dir)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 async def root():

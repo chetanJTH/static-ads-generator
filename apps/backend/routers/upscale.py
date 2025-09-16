@@ -25,6 +25,10 @@ class UpscaleResponse(BaseModel):
     original_url: str
     scale_factor: int
     created_at: str
+    processing_time: Optional[float] = None
+    original_size: Optional[str] = None
+    upscaled_size: Optional[str] = None
+    enhancement_details: Optional[dict] = None
 
 # In-memory storage for task status (in production, use Redis or database)
 upscale_tasks = {}
@@ -112,7 +116,15 @@ async def upscale_image_sync(request: UpscaleRequest):
             upscaled_url=result["upscaled_url"],
             original_url=str(request.image_url),
             scale_factor=request.scale_factor,
-            created_at=datetime.now().isoformat()
+            created_at=datetime.now().isoformat(),
+            processing_time=result.get("processing_time"),
+            enhancement_details={
+                "model": "recraft-ai/recraft-crisp-upscale",
+                "resolution_increase": f"{request.scale_factor}x",
+                "quality_enhancement": "AI-powered detail enhancement",
+                "output_format": "WebP",
+                "suitable_for": ["Print", "Web", "Professional use"]
+            }
         )
         
     except Exception as e:
@@ -231,25 +243,82 @@ async def delete_upscale_task(task_id: str):
     del upscale_tasks[task_id]
     return {"message": f"Task {task_id} deleted successfully"}
 
-@router.post("/upscale/download")
-async def download_upscaled_image(upscaled_url: HttpUrl):
+from fastapi.responses import StreamingResponse
+import io
+
+@router.get("/upscale/download/{task_id}")
+async def download_upscaled_image(task_id: str):
     """
-    Download and return the upscaled image
+    Download the upscaled image with proper headers
     """
     try:
-        response = requests.get(str(upscaled_url))
+        if task_id not in upscale_tasks:
+            raise HTTPException(status_code=404, detail="Task not found")
+        
+        task = upscale_tasks[task_id]
+        if task["status"] != "completed" or not task.get("upscaled_url"):
+            raise HTTPException(status_code=400, detail="Upscaled image not available")
+        
+        # Fetch the image
+        response = requests.get(task["upscaled_url"])
         response.raise_for_status()
         
-        # Return the image data
-        return {
-            "message": "Image downloaded successfully",
-            "size_bytes": len(response.content),
-            "content_type": response.headers.get("content-type", "image/webp")
-        }
+        # Generate filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"kraftey_upscaled_4x_{timestamp}.webp"
         
+        # Return as streaming response with download headers
+        return StreamingResponse(
+            io.BytesIO(response.content),
+            media_type="image/webp",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Length": str(len(response.content)),
+                "Cache-Control": "no-cache"
+            }
+        )
+        
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error downloading upscaled image: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to download image: {str(e)}")
+
+@router.get("/upscale/compare/{task_id}")
+async def get_comparison_data(task_id: str):
+    """
+    Get comparison data for before/after display
+    """
+    try:
+        if task_id not in upscale_tasks:
+            raise HTTPException(status_code=404, detail="Task not found")
+        
+        task = upscale_tasks[task_id]
+        if task["status"] != "completed":
+            raise HTTPException(status_code=400, detail="Upscaling not completed")
+        
+        # Get image dimensions (optional)
+        original_info = {"url": task["original_url"], "type": "original"}
+        upscaled_info = {"url": task["upscaled_url"], "type": "upscaled", "scale": task["scale_factor"]}
+        
+        return {
+            "task_id": task_id,
+            "original": original_info,
+            "upscaled": upscaled_info,
+            "comparison": {
+                "resolution_increase": f"{task['scale_factor']}x",
+                "quality_enhancement": "AI-powered detail enhancement",
+                "format": "WebP (optimized for web)",
+                "use_cases": ["Print ready", "High-res displays", "Professional use"]
+            },
+            "created_at": task["created_at"]
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting comparison data: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get comparison data: {str(e)}")
 
 # Health check for upscale service
 @router.get("/upscale/health")
@@ -276,3 +345,4 @@ async def upscale_health_check():
             "service": "image-upscale",
             "error": str(e)
         }
+
