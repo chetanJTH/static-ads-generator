@@ -14,16 +14,9 @@ const blogPosts = [
     image: '🎨',
     date: 'September 16, 2025'
   },
-{
+  {
     title: 'How to Edit Images for Different Social Media Platforms',
-    excerpt: '
-Introduction
-
-Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today's digital landscape.
-
-Key Concepts
-
-This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
+    excerpt: 'Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today\'s digital landscape. This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
     category: 'Photography',
     readTime: '1 min read',
     href: '/blog/how-to-edit-images-for-different-social-media-platforms',
