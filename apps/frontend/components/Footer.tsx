@@ -13,8 +13,8 @@ export default function Footer() {
               Kraftey
             </Link>
             <p className="text-gray-400 mt-4 max-w-md">
-              AI-powered tools for creators. Remove backgrounds, generate banners, create videos, 
-              and write copy - all in one place.
+              AI-powered image tools for creators. Upscale image quality 4x and remove backgrounds 
+              instantly with advanced AI technology.
             </p>
             <div className="flex space-x-4 mt-6">
               <a href="#" className="text-gray-400 hover:text-white">
@@ -40,7 +40,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Tools</h3>
             <ul className="space-y-2">
               <li><Link href="/remove-background" className="text-gray-400 hover:text-white">Remove Background</Link></li>
-              <li><Link href="/ai-banner-generator" className="text-gray-400 hover:text-white">AI Banner Generator</Link></li>
+              <li><Link href="/image-upscaler" className="text-gray-400 hover:text-white">AI Image Upscaler</Link></li>
               <li><Link href="/ai-video-generator" className="text-gray-400 hover:text-white">AI Video Generator</Link></li>
               <li><Link href="/ai-text-generator" className="text-gray-400 hover:text-white">AI Text Generator</Link></li>
             </ul>

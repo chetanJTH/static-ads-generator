@@ -12,14 +12,6 @@ const tools = [
     features: ['Instant processing', 'HD quality', 'Transparent PNG', 'Bulk processing']
   },
   {
-    title: 'AI Banner Generator',
-    description: 'Create stunning social media banners and ads from product photos with AI-generated backgrounds.',
-    icon: '🎨',
-    href: '/ai-banner-generator',
-    status: 'Live',
-    features: ['Instagram/Facebook ready', 'Custom prompts', 'Multiple formats', 'Brand consistency']
-  },
-  {
     title: 'AI Image Upscaler',
     description: 'Enhance image quality and resolution with AI-powered upscaling technology. 4x resolution increase.',
     icon: '🔍',

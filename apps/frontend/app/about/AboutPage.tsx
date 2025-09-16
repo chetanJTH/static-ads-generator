@@ -201,10 +201,10 @@ export default function AboutPage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6 border border-gray-200 rounded-lg">
-              <div className="text-3xl mb-4">🎨</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Banner Generator</h3>
-              <p className="text-gray-600 mb-4">Create stunning social media banners from product photos</p>
-              <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Coming Soon</span>
+              <div className="text-3xl mb-4">🚀</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">AI Image Upscaler</h3>
+              <p className="text-gray-600 mb-4">Enhance image quality and resolution with 4x AI upscaling technology</p>
+              <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded-full">Live</span>
             </div>
             
             <div className="text-center p-6 border border-gray-200 rounded-lg">

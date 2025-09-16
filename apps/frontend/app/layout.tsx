@@ -4,9 +4,9 @@ import Providers from '../components/Providers'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://kraftey.com'),
-  title: 'Kraftey - Background Remove & AI Tools to Design, Edit & Create Faster',
-  description: 'Free AI tools for creators: Remove backgrounds, generate banners, create videos, and write copy. Transform your content creation workflow with Kraftey.',
-  keywords: 'background remove, AI background remover, remove background online, background remover free, AI tools, banner generator, content creation, free AI, AI banner maker, transparent background',
+  title: 'Kraftey - AI Image Upscaler & Background Remover | Enhance Image Quality Free',
+  description: 'Free AI image upscaler and background remover. Enhance image quality 4x, increase resolution, and remove backgrounds instantly. Professional AI tools for creators and businesses.',
+  keywords: 'AI image upscaler, enhance image quality, increase image resolution, 4x upscale, image enhancement, background remover, AI image tools, upscale image free, photo enhancer, image quality improvement',
   authors: [{ name: 'Kraftey Team' }],
   creator: 'Kraftey',
   publisher: 'Kraftey',
@@ -155,7 +155,7 @@ export default function RootLayout({
             {
               '@type': 'TypeAndQuantityNode',
               amountOfThisGood: 'Unlimited',
-              typeOfGood: 'AI Banner Generation'
+                typeOfGood: 'AI Image Enhancement'
             },
             {
               '@type': 'TypeAndQuantityNode',
@@ -190,7 +190,7 @@ export default function RootLayout({
         'HD quality image processing',
         'Transparent PNG output',
         'Bulk image processing',
-        'AI banner generation',
+        'AI image upscaling and enhancement',
         'Multiple file format support',
         'Commercial license included',
         'API integration',
@@ -207,8 +207,8 @@ export default function RootLayout({
         },
         {
           '@type': 'ImageObject',
-          url: 'https://kraftey.com/screenshots/banner-generator.jpg',
-          caption: 'AI Banner Generation Tool'
+          url: 'https://kraftey.com/screenshots/image-upscaler.jpg',
+          caption: 'AI Image Upscaler Tool'
         }
       ],
       video: {
@@ -220,7 +220,7 @@ export default function RootLayout({
         duration: 'PT2M30S',
         contentUrl: 'https://kraftey.com/demo-video.mp4'
       },
-      keywords: 'background remover, AI image editing, transparent background, PNG converter, bulk image processing, banner generator, content creation, photo editing',
+      keywords: 'AI image upscaler, enhance image quality, increase resolution, 4x upscale, background remover, AI image editing, transparent background, PNG converter, bulk image processing, photo enhancer, content creation, photo editing',
       mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': 'https://kraftey.com'

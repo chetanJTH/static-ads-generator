@@ -36,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/ai-banner-generator`,
+      url: `${baseUrl}/image-upscaler`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9,
@@ -49,6 +49,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/blog/top-5-free-background-removal-tools-2025`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/how-to-optimize-images-for-better-seo-rankings`,
+      lastModified: currentDate,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/blog/how-to-edit-images-for-different-social-media-platforms`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.7,

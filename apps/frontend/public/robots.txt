@@ -16,7 +16,7 @@ Allow: /about
 Allow: /contact
 Allow: /pricing
 Allow: /remove-background
-Allow: /ai-banner-generator
+Allow: /image-upscaler
 Allow: /blog
 Allow: /blog/*
 

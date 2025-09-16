@@ -29,7 +29,7 @@ const plans = [
     description: 'For professionals and growing businesses',
     features: [
       'Everything in Free',
-      'AI banner generation',
+      'AI image upscaling (4x enhancement)',
       'Bulk processing',
       'Priority support',
       'API access',
@@ -70,7 +70,7 @@ const faqs = [
   },
   {
     question: "What's included in the Pro plan?",
-    answer: "Pro plan will include AI banner generation, bulk processing, API access, and advanced editing tools. It's currently in development and will be available soon."
+    answer: "Pro plan includes AI image upscaling (4x enhancement), bulk processing, API access, and advanced editing tools. It's currently in development and will be available soon."
   },
   {
     question: "Do you offer refunds?",
@@ -207,7 +207,7 @@ export default function PricingPage() {
                     <td className="px-6 py-4 text-center">✅</td>
                   </tr>
                   <tr>
-                    <td className="px-6 py-4 text-sm text-gray-900">AI Banner Generation</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">AI Image Upscaling (4x)</td>
                     <td className="px-6 py-4 text-center">❌</td>
                     <td className="px-6 py-4 text-center">✅</td>
                     <td className="px-6 py-4 text-center">✅</td>
