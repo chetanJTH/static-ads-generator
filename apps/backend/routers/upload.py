@@ -54,25 +54,27 @@ async def upload_file(file: UploadFile = File(...)):
         with open(file_path, "wb") as buffer:
             buffer.write(file_content)
         
-        # Try to upload to Cloudinary for public access (REQUIRED for Replicate)
+        # Try to upload to Cloudinary for public access (preferred for Replicate)
         file_url = None
         cloudinary_success = False
         
         try:
             if cloud_storage.use_cloudinary:
-                # Upload to Cloudinary - this is required for Replicate access
+                # Upload to Cloudinary for better accessibility
                 file_url = await cloud_storage.upload_image_to_public_url(file_content, unique_filename)
                 cloudinary_success = True
                 logger.info(f"File uploaded to Cloudinary: {file_url}")
             else:
-                raise Exception("Cloudinary not configured")
+                logger.info("Cloudinary not configured, using local storage")
         except Exception as cloud_error:
-            logger.error(f"Cloudinary upload failed: {cloud_error}")
-            # Return error instead of localhost URL since Replicate can't access it
-            raise HTTPException(
-                status_code=400, 
-                detail=f"File upload failed: Cloudinary upload required for AI processing. Error: {str(cloud_error)}"
-            )
+            logger.warning(f"Cloudinary upload failed, using local storage: {cloud_error}")
+        
+        # If Cloudinary failed or not configured, use local URL
+        if not file_url:
+            # Use the server's base URL for local files
+            base_url = os.getenv("SERVER_BASE_URL", "https://staticapi.kraftey.com")
+            file_url = f"{base_url}/uploads/{unique_filename}"
+            logger.info(f"Using local file URL: {file_url}")
         
         logger.info(f"File uploaded successfully: {unique_filename}")
         
