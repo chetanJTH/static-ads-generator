@@ -44,10 +44,11 @@ class BlogAutomation {
 
     this.internalLinks = [
       { text: "background removal tool", url: "/remove-background" },
-      { text: "AI banner generator", url: "/ai-banner-generator" },
+      { text: "AI image upscaler", url: "/image-upscaler" },
       { text: "free background remover", url: "/remove-background" },
       { text: "Kraftey's AI tools", url: "/" },
       { text: "professional image editing", url: "/remove-background" },
+      { text: "image upscaling", url: "/image-upscaler" },
       { text: "transparent background", url: "/remove-background" },
       { text: "product photography", url: "/blog" },
       { text: "eCommerce tools", url: "/pricing" },
@@ -705,6 +706,36 @@ export default function Page() {
     }
   }
 
+  // Update sitemap.xml with new blog post
+  updateSitemap(newPost) {
+    const sitemapPath = path.join(this.frontendPath, 'public', 'sitemap.xml');
+    
+    if (fs.existsSync(sitemapPath)) {
+      let sitemapContent = fs.readFileSync(sitemapPath, 'utf8');
+      
+      // Create new blog post entry
+      const currentDate = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      const newBlogEntry = `  <url>
+    <loc>https://kraftey.com/blog/${newPost.slug}</loc>
+    <lastmod>${currentDate}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`;
+
+      // Find the last blog post entry and add the new one after it
+      const lastBlogPostIndex = sitemapContent.lastIndexOf('</url>\n</urlset>');
+      if (lastBlogPostIndex !== -1) {
+        const beforeClosing = sitemapContent.substring(0, lastBlogPostIndex + 6);
+        const afterClosing = sitemapContent.substring(lastBlogPostIndex + 6);
+        
+        sitemapContent = beforeClosing + '\n  \n' + newBlogEntry + '\n' + afterClosing;
+        fs.writeFileSync(sitemapPath, sitemapContent);
+        
+        console.log(`✅ Updated sitemap.xml with new blog post: ${newPost.slug}`);
+      }
+    }
+  }
+
   // Main function to generate and create a new blog post
   async generateDailyPost() {
     try {
@@ -722,6 +753,9 @@ export default function Page() {
 
       // Update blog listing
       this.updateBlogListing(blogPost);
+
+      // Update sitemap.xml
+      this.updateSitemap(blogPost);
 
       console.log(`✅ Successfully created blog post: ${blogPost.slug}`);
       return blogPost;
