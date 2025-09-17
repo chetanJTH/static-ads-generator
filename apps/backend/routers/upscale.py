@@ -178,13 +178,19 @@ async def run_upscale_sync(image_url: str, scale_factor: int):
         logger.info(f"Running Replicate upscale with input: {input_data}")
         
         # Set Replicate API token from environment
-        replicate.api_token = os.getenv("REPLICATE_API_TOKEN")
+        api_token = os.getenv("REPLICATE_API_TOKEN")
+        if not api_token:
+            raise Exception("REPLICATE_API_TOKEN environment variable not configured")
+        
+        replicate.api_token = api_token
+        logger.info(f"Replicate token configured: {api_token[:8]}...")
         
         # Run the upscaling model
         output = replicate.run(
             "recraft-ai/recraft-crisp-upscale",
             input=input_data
         )
+        logger.info(f"Replicate API call completed successfully")
         
         # Extract the URL from the output
         if hasattr(output, 'url'):
