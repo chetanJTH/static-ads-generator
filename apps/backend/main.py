@@ -47,7 +47,7 @@ from routers import remove_bg, design_card, health, upscale, upload
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 # Security configuration
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,kraftey.com,staticapi.kraftey.com").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,kraftey.com,staticapi.kraftey.com,ubuntu-s-1vcpu-1gb-blr1-01").split(",")
 
 app = FastAPI(
     title="Static Ads Generator API",
@@ -58,12 +58,12 @@ app = FastAPI(
     openapi_url="/openapi.json" if ENVIRONMENT == "development" else None,
 )
 
-# Add trusted host middleware for security (only in production)
-if ENVIRONMENT == "production":
-    app.add_middleware(
-        TrustedHostMiddleware, 
-        allowed_hosts=ALLOWED_HOSTS
-    )
+# Add trusted host middleware for security (disabled for now - was blocking legitimate requests)
+# if ENVIRONMENT == "production":
+#     app.add_middleware(
+#         TrustedHostMiddleware, 
+#         allowed_hosts=ALLOWED_HOSTS
+#     )
 
 # Simple rate limiting middleware
 @app.middleware("http")
