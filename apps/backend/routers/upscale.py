@@ -166,25 +166,6 @@ async def run_upscale_sync(image_url: str, scale_factor: int):
     Run the actual upscaling using Replicate
     """
     try:
-        # Check if REPLICATE_API_TOKEN is set
-        replicate_token = os.getenv("REPLICATE_API_TOKEN")
-        if not replicate_token:
-            logger.error("REPLICATE_API_TOKEN environment variable not set")
-            raise ValueError("REPLICATE_API_TOKEN environment variable not set")
-        
-        # Log the token status (first 8 chars for security)
-        logger.info(f"Using Replicate token: {replicate_token[:8]}...")
-        
-        # Validate image URL accessibility
-        try:
-            response = requests.head(image_url, timeout=10)
-            if response.status_code != 200:
-                raise ValueError(f"Image URL not accessible: {response.status_code}")
-            logger.info(f"Image URL validated: {image_url}")
-        except requests.RequestException as e:
-            logger.error(f"Failed to validate image URL {image_url}: {e}")
-            raise ValueError(f"Image URL not accessible: {str(e)}")
-        
         # Prepare input for Replicate
         input_data = {
             "image": image_url
@@ -192,25 +173,15 @@ async def run_upscale_sync(image_url: str, scale_factor: int):
         
         # Add scale factor if supported by the model
         if scale_factor and scale_factor != 4:
-            # Note: The recraft-crisp-upscale model might have specific scale options
-            # Check the model documentation for supported scale factors
             logger.info(f"Requested scale factor: {scale_factor}x (model default may override)")
         
         logger.info(f"Running Replicate upscale with input: {input_data}")
         
-        # Set Replicate API token
-        replicate.api_token = replicate_token
-        
-        # Run the upscaling model with error handling
-        try:
-            output = replicate.run(
-                "recraft-ai/recraft-crisp-upscale",
-                input=input_data
-            )
-            logger.info(f"Replicate API call successful, output type: {type(output)}")
-        except Exception as replicate_error:
-            logger.error(f"Replicate API error: {str(replicate_error)}")
-            raise Exception(f"Replicate API failed: {str(replicate_error)}")
+        # Run the upscaling model
+        output = replicate.run(
+            "recraft-ai/recraft-crisp-upscale",
+            input=input_data
+        )
         
         # Extract the URL from the output
         if hasattr(output, 'url'):
