@@ -1,0 +1,22 @@
+# Force sitemap.xml to go through Next.js dynamic route
+<Files "sitemap.xml">
+    # Prevent direct access to any static sitemap.xml
+    Order Deny,Allow
+    Deny from all
+</Files>
+
+# Redirect sitemap.xml to Next.js app router
+RewriteEngine On
+RewriteRule ^sitemap\.xml$ /api/sitemap [L,R=301]
+
+# Ensure proper content type for XML files
+<IfModule mod_mime.c>
+    AddType application/xml .xml
+</IfModule>
+
+# Cache control for dynamic sitemap
+<IfModule mod_headers.c>
+    <FilesMatch "\.(xml)$">
+        Header set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+</IfModule>

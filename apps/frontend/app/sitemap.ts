@@ -3,6 +3,9 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://kraftey.com'
   const currentDate = new Date().toISOString()
+  
+  // Force unique timestamp to ensure this is the dynamic route
+  console.log('🚀 Dynamic sitemap generated at:', currentDate)
 
   return [
     {
