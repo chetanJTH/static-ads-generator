@@ -23,7 +23,7 @@ export default function ImageUpscaler() {
   const [scaleMode, setScaleMode] = useState<'sync' | 'async'>('sync')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000'
+  const API_BASE = process.env.NODE_ENV === 'production' ? 'https://staticapi.kraftey.com' : (process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000')
 
   // Handle file selection
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
