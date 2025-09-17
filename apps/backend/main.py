@@ -8,25 +8,30 @@ import logging
 from dotenv import load_dotenv
 import time
 
-# Load environment variables based on environment
+# Load environment variables - try multiple sources
 import sys
 from pathlib import Path
 
-# Determine which env file to load
-env_file = None
-if os.getenv("ENVIRONMENT") == "production":
-    env_file = ".env.production"
-elif Path(".env").exists():
-    env_file = ".env"
-elif Path("env.production").exists():
-    env_file = "env.production"
+# Try to load from multiple possible env files
+env_files_to_try = [
+    ".env",
+    ".env.production", 
+    "env.production",
+    ".env.local"
+]
 
-if env_file:
-    load_dotenv(env_file)
-    print(f"Loaded environment from: {env_file}")
-else:
-    load_dotenv()  # Load from system environment variables
-    print("Loading from system environment variables")
+loaded_files = []
+for env_file in env_files_to_try:
+    if Path(env_file).exists():
+        load_dotenv(env_file, override=False)  # Don't override existing vars
+        loaded_files.append(env_file)
+
+# Also load from system environment (Digital Ocean sets these here)
+load_dotenv(override=False)
+
+print(f"Environment files loaded: {loaded_files if loaded_files else 'None (using system env vars)'}")
+print(f"Environment detected: {os.getenv('ENVIRONMENT', 'development')}")
+print(f"Replicate token configured: {bool(os.getenv('REPLICATE_API_TOKEN'))}")
 
 # Configure logging
 logging.basicConfig(
