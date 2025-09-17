@@ -167,8 +167,23 @@ async def run_upscale_sync(image_url: str, scale_factor: int):
     """
     try:
         # Check if REPLICATE_API_TOKEN is set
-        if not os.getenv("REPLICATE_API_TOKEN"):
+        replicate_token = os.getenv("REPLICATE_API_TOKEN")
+        if not replicate_token:
+            logger.error("REPLICATE_API_TOKEN environment variable not set")
             raise ValueError("REPLICATE_API_TOKEN environment variable not set")
+        
+        # Log the token status (first 8 chars for security)
+        logger.info(f"Using Replicate token: {replicate_token[:8]}...")
+        
+        # Validate image URL accessibility
+        try:
+            response = requests.head(image_url, timeout=10)
+            if response.status_code != 200:
+                raise ValueError(f"Image URL not accessible: {response.status_code}")
+            logger.info(f"Image URL validated: {image_url}")
+        except requests.RequestException as e:
+            logger.error(f"Failed to validate image URL {image_url}: {e}")
+            raise ValueError(f"Image URL not accessible: {str(e)}")
         
         # Prepare input for Replicate
         input_data = {
@@ -183,11 +198,19 @@ async def run_upscale_sync(image_url: str, scale_factor: int):
         
         logger.info(f"Running Replicate upscale with input: {input_data}")
         
-        # Run the upscaling model
-        output = replicate.run(
-            "recraft-ai/recraft-crisp-upscale",
-            input=input_data
-        )
+        # Set Replicate API token
+        replicate.api_token = replicate_token
+        
+        # Run the upscaling model with error handling
+        try:
+            output = replicate.run(
+                "recraft-ai/recraft-crisp-upscale",
+                input=input_data
+            )
+            logger.info(f"Replicate API call successful, output type: {type(output)}")
+        except Exception as replicate_error:
+            logger.error(f"Replicate API error: {str(replicate_error)}")
+            raise Exception(f"Replicate API failed: {str(replicate_error)}")
         
         # Extract the URL from the output
         if hasattr(output, 'url'):
@@ -221,6 +244,23 @@ def get_status_message(status: str, error: Optional[str] = None) -> str:
         "failed": f"Image upscaling failed: {error}" if error else "Image upscaling failed"
     }
     return messages.get(status, "Unknown status")
+
+@router.get("/upscale/debug")
+async def debug_upscale_config():
+    """
+    Debug endpoint to check upscale configuration
+    """
+    try:
+        config = {
+            "replicate_token_configured": bool(os.getenv("REPLICATE_API_TOKEN")),
+            "replicate_token_prefix": os.getenv("REPLICATE_API_TOKEN", "")[:8] + "..." if os.getenv("REPLICATE_API_TOKEN") else "Not set",
+            "environment": os.getenv("ENVIRONMENT", "unknown"),
+            "upscale_tasks_count": len(upscale_tasks),
+            "model": "recraft-ai/recraft-crisp-upscale"
+        }
+        return config
+    except Exception as e:
+        return {"error": str(e)}
 
 @router.get("/upscale/tasks")
 async def list_upscale_tasks():
