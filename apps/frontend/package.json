@@ -4,9 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node remove-static-sitemap.js",
     "build": "next build",
-    "postbuild": "node remove-static-sitemap.js",
     "start": "next start",
     "lint": "next lint"
   },
