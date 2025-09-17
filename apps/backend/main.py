@@ -1,9 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.responses import JSONResponse
 import os
 import logging
 from dotenv import load_dotenv
+import time
 
 # Load environment variables
 load_dotenv()
@@ -21,13 +24,58 @@ from routers import remove_bg, design_card, health, upscale, upload
 # Get environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
+# Security configuration
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,kraftey.com,staticapi.kraftey.com").split(",")
+
 app = FastAPI(
     title="Static Ads Generator API",
     description="API for generating static ads with AI",
     version="1.0.0",
     docs_url="/docs" if ENVIRONMENT == "development" else None,
     redoc_url="/redoc" if ENVIRONMENT == "development" else None,
+    openapi_url="/openapi.json" if ENVIRONMENT == "development" else None,
 )
+
+# Add trusted host middleware for security
+app.add_middleware(
+    TrustedHostMiddleware, 
+    allowed_hosts=ALLOWED_HOSTS if ENVIRONMENT == "production" else ["*"]
+)
+
+# Rate limiting middleware
+class RateLimitMiddleware:
+    def __init__(self, calls: int = 100, period: int = 60):
+        self.calls = calls
+        self.period = period
+        self.clients = {}
+    
+    async def __call__(self, request: Request, call_next):
+        client_ip = request.client.host
+        current_time = time.time()
+        
+        # Clean old entries
+        self.clients = {
+            ip: (count, timestamp) for ip, (count, timestamp) in self.clients.items()
+            if current_time - timestamp < self.period
+        }
+        
+        # Check rate limit
+        if client_ip in self.clients:
+            count, timestamp = self.clients[client_ip]
+            if count >= self.calls:
+                return JSONResponse(
+                    status_code=429,
+                    content={"error": "Rate limit exceeded. Please try again later."}
+                )
+            self.clients[client_ip] = (count + 1, timestamp)
+        else:
+            self.clients[client_ip] = (1, current_time)
+        
+        response = await call_next(request)
+        return response
+
+# Add rate limiting
+app.add_middleware(RateLimitMiddleware, calls=100, period=60)
 
 # Configure CORS
 if ENVIRONMENT == "production":
@@ -83,10 +131,35 @@ if not os.path.exists(uploads_dir):
     os.makedirs(uploads_dir)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+# Security headers middleware
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    
+    # Add security headers
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    
+    if ENVIRONMENT == "production":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    
+    return response
+
 @app.get("/")
 async def root():
-    return {
-        "message": "Static Ads Generator API",
-        "version": "1.0.0",
-        "docs": "/docs"
-    }
+    if ENVIRONMENT == "production":
+        return {
+            "message": "Kraftey AI API",
+            "version": "1.0.0",
+            "status": "online"
+        }
+    else:
+        return {
+            "message": "Static Ads Generator API",
+            "version": "1.0.0",
+            "docs": "/docs",
+            "environment": ENVIRONMENT
+        }

@@ -24,8 +24,8 @@ export default function Header() {
             <Link href="/remove-background" className="text-gray-600 hover:text-blue-600 transition-colors">
               Remove Background
             </Link>
-            <Link href="/ai-banner-generator" className="text-gray-600 hover:text-blue-600 transition-colors">
-              AI Banners
+            <Link href="/image-upscaler" className="text-gray-600 hover:text-blue-600 transition-colors">
+              Image Upscaler
             </Link>
             <Link href="/blog" className="text-gray-600 hover:text-blue-600 transition-colors">
               Blog
@@ -86,8 +86,8 @@ export default function Header() {
               <Link href="/remove-background" className="text-gray-600 hover:text-blue-600">
                 Remove Background
               </Link>
-              <Link href="/ai-banner-generator" className="text-gray-600 hover:text-blue-600">
-                AI Banners
+              <Link href="/image-upscaler" className="text-gray-600 hover:text-blue-600">
+                Image Upscaler
               </Link>
               <Link href="/blog" className="text-gray-600 hover:text-blue-600">
                 Blog

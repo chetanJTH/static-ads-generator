@@ -31,51 +31,6 @@ const blogPosts = [
     href: '/blog/top-5-free-background-removal-tools-2025',
     image: '🛠️',
     date: 'January 15, 2025'
-  },
-  {
-    title: 'How to Make High-Converting Ads with AI (Guide for eCommerce)',
-    excerpt: 'Learn how to create compelling product ads using AI tools that drive sales and engagement. This comprehensive guide covers everything from image optimization to copywriting with AI assistance.',
-    category: 'Marketing',
-    readTime: '8 min read',
-    href: '/blog/high-converting-ads-with-ai-ecommerce-guide',
-    image: '📈',
-    date: 'January 12, 2025'
-  },
-  {
-    title: 'Best AI Tools for Shopify & Amazon Sellers',
-    excerpt: 'Essential AI tools every eCommerce seller needs to create professional product listings and marketing materials. Boost your sales with these powerful AI solutions.',
-    category: 'eCommerce',
-    readTime: '6 min read',
-    href: '/blog/best-ai-tools-shopify-amazon-sellers',
-    image: '🛒',
-    date: 'January 10, 2025'
-  },
-  {
-    title: 'Complete Guide to AI-Powered Background Removal',
-    excerpt: 'Master the art of background removal using AI tools. Learn techniques, best practices, and how to achieve professional results for your product photography.',
-    category: 'Tutorial',
-    readTime: '10 min read',
-    href: '/blog/ai-background-removal-guide',
-    image: '🎨',
-    date: 'January 8, 2025'
-  },
-  {
-    title: 'Creating Professional Product Mockups with AI',
-    excerpt: 'Transform your product photos into stunning mockups using AI technology. Perfect for eCommerce, marketing materials, and social media content.',
-    category: 'Design',
-    readTime: '7 min read',
-    href: '/blog/ai-product-mockups-guide',
-    image: '📱',
-    date: 'January 5, 2025'
-  },
-  {
-    title: 'AI Tools for Social Media Content Creation',
-    excerpt: 'Discover how AI can streamline your social media content creation process. From image editing to caption generation, these tools will save you hours.',
-    category: 'Social Media',
-    readTime: '6 min read',
-    href: '/blog/ai-social-media-content-tools',
-    image: '📱',
-    date: 'January 3, 2025'
   }
 ]
 

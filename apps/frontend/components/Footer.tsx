@@ -41,8 +41,6 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><Link href="/remove-background" className="text-gray-400 hover:text-white">Remove Background</Link></li>
               <li><Link href="/image-upscaler" className="text-gray-400 hover:text-white">AI Image Upscaler</Link></li>
-              <li><Link href="/ai-video-generator" className="text-gray-400 hover:text-white">AI Video Generator</Link></li>
-              <li><Link href="/ai-text-generator" className="text-gray-400 hover:text-white">AI Text Generator</Link></li>
             </ul>
           </div>
           
@@ -54,7 +52,6 @@ export default function Footer() {
               <li><Link href="/blog" className="text-gray-400 hover:text-white">Blog</Link></li>
               <li><Link href="/pricing" className="text-gray-400 hover:text-white">Pricing</Link></li>
               <li><Link href="/contact" className="text-gray-400 hover:text-white">Contact</Link></li>
-              <li><Link href="/api" className="text-gray-400 hover:text-white">API</Link></li>
             </ul>
           </div>
         </div>
