@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { BannerAd } from './AdSense'
 
 export default function Hero() {
   return (
@@ -29,6 +30,11 @@ export default function Hero() {
             >
               Remove Backgrounds
             </Link>
+          </div>
+          
+          {/* Ad Banner */}
+          <div className="mb-12">
+            <BannerAd adSlot="1234567890" className="mx-auto max-w-4xl" />
           </div>
           
           {/* Stats */}

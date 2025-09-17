@@ -4,6 +4,7 @@ import React from 'react'
 import Header from '../../../components/Header'
 import Footer from '../../../components/Footer'
 import Link from 'next/link'
+import { InContentAd } from '../../../components/AdSense'
 
 export default function BlogPostPage() {
   return (
@@ -35,6 +36,11 @@ export default function BlogPostPage() {
             <p className="text-xl text-gray-600 leading-relaxed">
               Learn how to optimize images for better SEO rankings with this comprehensive guide covering image compression, alt text, file naming, and technical SEO strategies.
             </p>
+
+            {/* In-Content Ad */}
+            <div className="my-8">
+              <InContentAd adSlot="9876543210" className="mx-auto" />
+            </div>
           </header>
 
           {/* Article Content */}

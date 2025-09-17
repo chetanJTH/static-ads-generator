@@ -249,6 +249,12 @@ export default function RootLayout({
         {/* Google AdSense Meta Tag */}
         <meta name="google-adsense-account" content="ca-pub-9525032831778850" />
         
+        {/* Google AdSense Script */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9525032831778850"
+          crossOrigin="anonymous"
+        ></script>
         
         {/* Structured Data */}
         {jsonLd.map((schema, index) => (
