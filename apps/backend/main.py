@@ -8,8 +8,25 @@ import logging
 from dotenv import load_dotenv
 import time
 
-# Load environment variables
-load_dotenv()
+# Load environment variables based on environment
+import sys
+from pathlib import Path
+
+# Determine which env file to load
+env_file = None
+if os.getenv("ENVIRONMENT") == "production":
+    env_file = ".env.production"
+elif Path(".env").exists():
+    env_file = ".env"
+elif Path("env.production").exists():
+    env_file = "env.production"
+
+if env_file:
+    load_dotenv(env_file)
+    print(f"Loaded environment from: {env_file}")
+else:
+    load_dotenv()  # Load from system environment variables
+    print("Loading from system environment variables")
 
 # Configure logging
 logging.basicConfig(
@@ -156,3 +173,21 @@ async def root():
             "docs": "/docs",
             "environment": ENVIRONMENT
         }
+
+@app.get("/debug/env")
+async def debug_environment():
+    """
+    Debug endpoint to check environment variable status
+    Only available in development or when specifically requested
+    """
+    return {
+        "environment": os.getenv("ENVIRONMENT", "not_set"),
+        "replicate_token_configured": bool(os.getenv("REPLICATE_API_TOKEN")),
+        "replicate_token_preview": os.getenv("REPLICATE_API_TOKEN", "")[:8] + "..." if os.getenv("REPLICATE_API_TOKEN") else "NOT_SET",
+        "cloudinary_configured": bool(os.getenv("CLOUDINARY_CLOUD_NAME")),
+        "cors_origins": os.getenv("CORS_ORIGINS", "not_set"),
+        "log_level": os.getenv("LOG_LEVEL", "not_set"),
+        "port": os.getenv("PORT", "not_set"),
+        "host": os.getenv("HOST", "not_set"),
+        "all_env_vars": {k: "***" if "TOKEN" in k or "SECRET" in k or "KEY" in k else v for k, v in os.environ.items() if k.startswith(("REPLICATE", "CLOUDINARY", "CORS", "ENVIRONMENT", "LOG", "PORT", "HOST"))}
+    }
