@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 import os
 import uuid
 import shutil
@@ -100,7 +100,7 @@ async def upload_file(file: UploadFile = File(...)):
 @router.get("/uploads/{filename}")
 async def serve_uploaded_file(filename: str):
     """
-    Serve uploaded files
+    Serve uploaded files directly
     """
     try:
         file_path = UPLOAD_DIR / filename
@@ -108,13 +108,23 @@ async def serve_uploaded_file(filename: str):
         if not file_path.exists():
             raise HTTPException(status_code=404, detail="File not found")
         
-        # Return file info (in production, you'd serve the actual file)
-        return {
-            "filename": filename,
-            "exists": True,
-            "size": file_path.stat().st_size,
-            "url": f"/uploads/{filename}"
+        # Determine media type based on file extension
+        file_extension = file_path.suffix.lower()
+        media_type_map = {
+            '.jpg': 'image/jpeg',
+            '.jpeg': 'image/jpeg', 
+            '.png': 'image/png',
+            '.webp': 'image/webp',
+            '.gif': 'image/gif'
         }
+        media_type = media_type_map.get(file_extension, 'application/octet-stream')
+        
+        # Return the actual file
+        return FileResponse(
+            path=str(file_path),
+            media_type=media_type,
+            filename=filename
+        )
         
     except HTTPException:
         raise
