@@ -37,7 +37,7 @@ module.exports = {
         CORS_ORIGINS: 'https://kraftey.com,https://www.kraftey.com,https://staticapi.kraftey.com',
         API_HOST: '0.0.0.0',
         API_PORT: 8000,
-        REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN || '',
+        REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
         FLUX_MODEL: 'black-forest-labs/flux-schnell:latest'
       },
       instances: 1,
