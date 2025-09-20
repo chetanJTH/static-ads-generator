@@ -41,7 +41,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import routers
-from routers import remove_bg, design_card, health, upscale, upload
+from routers import remove_bg, remove_bg_replicate, design_card, health, upscale, upload
 
 # Get environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
@@ -129,6 +129,7 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(remove_bg.router, prefix="/remove-bg", tags=["remove-bg"])
+app.include_router(remove_bg_replicate.router, prefix="/api", tags=["background-removal-replicate"])
 app.include_router(design_card.router, prefix="/design-card", tags=["design-card"])
 app.include_router(upload.router, tags=["file-upload"])
 app.include_router(upscale.router, tags=["image-upscale"])

@@ -2,7 +2,7 @@
 
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
-import BackgroundRemover from '../../components/BackgroundRemover'
+import BackgroundRemoverReplicate from '../../components/BackgroundRemoverReplicate'
 
 const faqs = [
   {
@@ -101,7 +101,7 @@ export default function RemoveBackgroundPage() {
       {/* Background Remover Tool */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <BackgroundRemover />
+          <BackgroundRemoverReplicate />
         </div>
       </section>
 
