@@ -41,7 +41,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import routers
-from routers import remove_bg, remove_bg_replicate, design_card, health, upscale, upload
+from routers import remove_bg, remove_bg_replicate, design_card, health, upscale, upload, watermark_remover
 
 # Get environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
@@ -133,6 +133,7 @@ app.include_router(remove_bg_replicate.router, prefix="/api", tags=["background-
 app.include_router(design_card.router, prefix="/design-card", tags=["design-card"])
 app.include_router(upload.router, tags=["file-upload"])
 app.include_router(upscale.router, tags=["image-upscale"])
+app.include_router(watermark_remover.router, prefix="/api", tags=["watermark-remover"])
 
 # Mount static files for uploads
 import os
@@ -197,3 +198,21 @@ async def debug_environment():
         "host": os.getenv("HOST", "not_set"),
         "all_env_vars": {k: "***" if "TOKEN" in k or "SECRET" in k or "KEY" in k else v for k, v in os.environ.items() if k.startswith(("REPLICATE", "CLOUDINARY", "CORS", "ENVIRONMENT", "LOG", "PORT", "HOST"))}
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    
+    # Get port and host from environment variables
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    
+    logger.info(f"Starting server on {host}:{port}")
+    logger.info(f"Environment: {ENVIRONMENT}")
+    
+    uvicorn.run(
+        "main:app",
+        host=host,
+        port=port,
+        reload=ENVIRONMENT == "development",
+        log_level="info" if ENVIRONMENT == "development" else "warning"
+    )
