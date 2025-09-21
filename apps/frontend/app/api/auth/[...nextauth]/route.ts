@@ -94,7 +94,8 @@ const authOptions: NextAuthOptions = {
   // Custom page routes for authentication
   pages: {
     signIn: '/auth/signin',    // Custom sign-in page
-    signUp: '/auth/signup',    // Custom sign-up page
+    // Note: NextAuth doesn't have a built-in signUp page option
+    // Sign-up is handled through our custom /auth/signup page
   },
   
   // Callback functions to customize JWT and session behavior
