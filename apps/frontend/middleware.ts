@@ -9,8 +9,7 @@ export default withAuth(
       '/dashboard',
       '/profile',
       '/premium',
-      '/image-editor',
-      '/watermark-remover'
+      '/image-editor'
     ].some(route => req.nextUrl.pathname.startsWith(route))
 
     // Redirect to signin if accessing protected route without authentication
@@ -33,6 +32,7 @@ export default withAuth(
           '/',
           '/remove-background',
           '/image-upscaler',
+          '/watermark-remover',
           '/about',
           '/contact',
           '/blog',
