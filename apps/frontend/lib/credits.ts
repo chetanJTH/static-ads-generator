@@ -45,7 +45,7 @@ export async function checkFeatureAvailability(
     })
 
     if (!user) {
-      return { canUse: false, message: 'User not found' }
+      return { canUse: false, creditType: 'free', message: 'User not found' }
     }
 
     // Check if user has active subscription (unlimited usage)
@@ -97,6 +97,7 @@ export async function checkFeatureAvailability(
     console.error('Error checking feature availability:', error)
     return { 
       canUse: false, 
+      creditType: 'free',
       message: 'Error checking credits. Please try again.' 
     }
   }
