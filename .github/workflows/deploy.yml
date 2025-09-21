@@ -17,7 +17,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -29,12 +29,12 @@ jobs:
       run: |
         cd apps/frontend
         npm ci
-    
+
     - name: Run Frontend Linting
       run: |
         cd apps/frontend
         npm run lint
-    
+
     - name: Build Frontend (Test)
       run: |
         cd apps/frontend
@@ -57,7 +57,7 @@ jobs:
       with:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
+        password: ${{ secrets.SERVER_PASSWORD }}
         timeout: 300s
         script: |
           set -e
@@ -114,7 +114,7 @@ jobs:
           
           # Start PM2 services
           echo "Starting PM2 services..."
-          pm2 start ecosystem.config.js
+            pm2 start ecosystem.config.js
           pm2 save
           
           # Wait for services to start
