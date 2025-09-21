@@ -6,10 +6,37 @@ import Footer from '../../components/Footer'
 
 const blogPosts = [
   {
+    title: 'Image Quality Enhancement with AI Techniques (2025)',
+    excerpt: 'Discover cutting-edge AI techniques for enhancing image quality, from upscaling to noise reduction. Learn how modern AI algorithms can transform low-quality images into professional-grade visuals.',
+    category: 'AI Tools',
+    readTime: '7 min read',
+    href: '/blog/image-quality-enhancement-ai-techniques-2025',
+    image: '🤖',
+    date: 'September 21, 2025'
+  },
+  {
+    title: 'Best AI Image Editing Tools 2025: Comprehensive Guide',
+    excerpt: 'Explore the most powerful AI image editing tools available in 2025. From background removal to style transfer, discover which tools will revolutionize your creative workflow.',
+    category: 'AI Tools',
+    readTime: '10 min read',
+    href: '/blog/best-ai-image-editing-tools-2025-comprehensive-guide',
+    image: '⚡',
+    date: 'September 21, 2025'
+  },
+  {
+    title: 'How to Remove Watermarks from Images: AI Guide 2025',
+    excerpt: 'Learn professional techniques for removing watermarks from images using AI-powered tools. Discover ethical practices and the best tools for clean, watermark-free images.',
+    category: 'AI Tools',
+    readTime: '6 min read',
+    href: '/blog/how-to-remove-watermarks-from-images-ai-guide-2025',
+    image: '🧹',
+    date: 'September 21, 2025'
+  },
+  {
     title: 'How to Optimize Images for Better SEO Rankings',
     excerpt: 'Understanding how to optimize images for better SEO rankings is crucial for modern content creators and businesses looking to stay competitive in today\'s digital landscape. This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
-    category: 'Design',
-    readTime: '1 min read',
+    category: 'SEO',
+    readTime: '8 min read',
     href: '/blog/how-to-optimize-images-for-better-seo-rankings',
     image: '🎨',
     date: 'September 16, 2025'
@@ -17,8 +44,8 @@ const blogPosts = [
   {
     title: 'How to Edit Images for Different Social Media Platforms',
     excerpt: 'Understanding how to edit images for different social media platforms is crucial for modern content creators and businesses looking to stay competitive in today\'s digital landscape. This comprehensive guide covers everything you need to know about implementing effective strategies and best practices.',
-    category: 'Photography',
-    readTime: '1 min read',
+    category: 'Social Media',
+    readTime: '5 min read',
     href: '/blog/how-to-edit-images-for-different-social-media-platforms',
     image: '📸',
     date: 'September 16, 2025'
