@@ -20,6 +20,14 @@ const tools = [
     features: ['4x upscaling', 'AI enhancement', 'Professional quality', 'Fast processing']
   },
   {
+    title: 'Watermark Remover',
+    description: 'Remove watermarks from images using advanced AI technology. Clean, professional results.',
+    icon: '🧹',
+    href: '/watermark-remover',
+    status: 'Live',
+    features: ['AI-powered removal', 'High quality output', 'Multiple formats', 'Instant processing']
+  },
+  {
     title: 'AI Video Generator',
     description: 'Transform still images into engaging video ads for TikTok, Reels, and YouTube Shorts.',
     icon: '🎬',

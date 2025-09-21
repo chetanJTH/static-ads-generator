@@ -45,6 +45,13 @@
     <priority>0.9</priority>
   </url>
   
+  <url>
+    <loc>https://kraftey.com/watermark-remover</loc>
+    <lastmod>2025-09-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
   <!-- Blog -->
   <url>
     <loc>https://kraftey.com/blog</loc>
@@ -73,5 +80,26 @@
     <lastmod>2025-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://kraftey.com/blog/how-to-remove-watermarks-from-images-ai-guide-2025</loc>
+    <lastmod>2025-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://kraftey.com/blog/best-ai-image-editing-tools-2025-comprehensive-guide</loc>
+    <lastmod>2025-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://kraftey.com/blog/image-quality-enhancement-ai-techniques-2025</loc>
+    <lastmod>2025-09-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 </urlset>

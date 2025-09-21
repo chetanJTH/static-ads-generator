@@ -39,13 +39,23 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id               String    @id @default(cuid())
+  name             String?
+  email            String?   @unique
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  accounts         Account[]
+  sessions         Session[]
+  subscription     Subscription?
+  usageStats       UsageStats?
+  userCredits      UserCredits?
+  purchases        Purchase[]
+  featureUsages    FeatureUsage[]
 }
 
 model VerificationToken {
@@ -99,4 +109,107 @@ model Share {
   createdAt  DateTime  @default(now())
   
   creative Creative @relation(fields: [creativeId], references: [id], onDelete: Cascade)
+}
+
+// Subscription and Premium Features
+model Subscription {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  plan              String   // 'free', 'pro', 'enterprise'
+  status            String   // 'active', 'inactive', 'canceled', 'past_due'
+  stripeCustomerId  String?  @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId     String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAtPeriodEnd  Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Credits/Tokens System
+model UserCredits {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  // Different types of credits
+  backgroundRemovalCredits   Int  @default(0)  // Credits for background removal
+  imageUpscaleCredits       Int  @default(0)   // Credits for image upscaling
+  watermarkRemovalCredits   Int  @default(0)   // Credits for watermark removal
+  imageEditingCredits       Int  @default(0)   // Credits for image editing
+  // General tokens (can be used for any feature)
+  generalTokens             Int  @default(0)   // Universal tokens
+  // Free tier limits (unlimited during growth phase)
+  freeBackgroundRemovals    Int  @default(999999)   // Unlimited for growth
+  freeImageUpscales         Int  @default(999999)   // Unlimited for growth
+  lastFreeResetDate         DateTime @default(now())
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Purchase History
+model Purchase {
+  id              String   @id @default(cuid())
+  userId          String
+  purchaseType    String   // 'subscription', 'credits', 'tokens'
+  productId       String   // Plan ID or credit package ID
+  productName     String   // Human readable name
+  amount          Float    // Amount paid
+  currency        String   @default("USD")
+  stripePaymentIntentId String? @unique
+  stripeSessionId String?  @unique
+  status          String   // 'pending', 'completed', 'failed', 'refunded'
+  creditsGranted  String?  // JSON string with credit amounts granted
+  metadata        String?  // Additional purchase metadata as JSON string
+  purchasedAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, purchasedAt])
+  @@index([status])
+}
+
+model UsageStats {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  backgroundRemovalCount Int     @default(0)
+  imageUpscaleCount     Int      @default(0)
+  imageEditingCount     Int      @default(0)
+  watermarkRemovalCount Int      @default(0)
+  apiCallsCount         Int      @default(0)
+  lastResetDate         DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Premium Feature Usage Logs
+model FeatureUsage {
+  id              String   @id @default(cuid())
+  userId          String
+  feature         String   // 'background_removal', 'image_upscale', 'image_editing', 'watermark_removal'
+  inputUrl        String?
+  outputUrl       String?
+  processingTime  Float?
+  success         Boolean  @default(true)
+  errorMessage    String?
+  // Credit tracking
+  creditsUsed     Int      @default(1)    // How many credits were deducted
+  creditType      String?  // 'specific', 'general', 'free'
+  wasFreeTier     Boolean  @default(false) // Was this a free tier usage
+  // Additional data
+  metadata        String?  // JSON string for additional data
+  createdAt       DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, feature])
+  @@index([createdAt])
+  @@index([userId, wasFreeTier])
 }

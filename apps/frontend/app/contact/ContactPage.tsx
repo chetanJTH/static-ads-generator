@@ -3,6 +3,7 @@
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { useState } from 'react'
+import { reportConversionEvent } from '../../lib/conversions'
 
 const contactOptions = [
   {
@@ -67,7 +68,20 @@ export default function ContactPage() {
     e.preventDefault()
     // Handle form submission here
     console.log('Form submitted:', formData)
+    
+    // Track conversion
+    reportConversionEvent()
+    
     alert('Thank you for your message! We\'ll get back to you soon.')
+    
+    // Reset form after successful submission
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+      category: 'general'
+    })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

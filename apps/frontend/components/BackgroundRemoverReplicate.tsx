@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { api, ReplicateBgRemovalResponse } from '../lib/api'
+import { reportConversionEvent } from '../lib/conversions'
 
 interface BgRemovalTask {
   task_id: string
@@ -99,6 +100,11 @@ export default function BackgroundRemoverReplicate() {
 
       setBgTask(task)
 
+      // Track conversion for successful sync processing
+      if (processingMode === 'sync' && task.status === 'completed') {
+        reportConversionEvent()
+      }
+
       // If async mode, poll for status
       if (processingMode === 'async') {
         pollTaskStatus(task.task_id)
@@ -130,6 +136,11 @@ export default function BackgroundRemoverReplicate() {
         if (task.status === 'completed' || task.status === 'failed') {
           clearInterval(pollInterval)
           setIsProcessing(false)
+          
+          // Track conversion for successful background removal
+          if (task.status === 'completed') {
+            reportConversionEvent()
+          }
         }
       } catch (error) {
         console.error('Error polling task status:', error)

@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import axios from 'axios'
+import { reportConversionEvent } from '../lib/conversions'
 
 interface UpscaleTask {
   task_id: string
@@ -99,6 +100,11 @@ export default function ImageUpscaler() {
       const task: UpscaleTask = response.data
       setUpscaleTask(task)
 
+      // Track conversion for successful sync processing
+      if (scaleMode === 'sync' && task.status === 'completed') {
+        reportConversionEvent()
+      }
+
       // If async mode, poll for status
       if (scaleMode === 'async') {
         pollTaskStatus(task.task_id)
@@ -123,6 +129,11 @@ export default function ImageUpscaler() {
         if (task.status === 'completed' || task.status === 'failed') {
           clearInterval(pollInterval)
           setIsUpscaling(false)
+          
+          // Track conversion for successful async processing
+          if (task.status === 'completed') {
+            reportConversionEvent()
+          }
         }
       } catch (error) {
         console.error('Error polling task status:', error)

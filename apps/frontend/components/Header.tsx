@@ -27,6 +27,10 @@ export default function Header() {
             <Link href="/image-upscaler" className="text-gray-600 hover:text-blue-600 transition-colors">
               Image Upscaler
             </Link>
+            <Link href="/watermark-remover" className="text-gray-600 hover:text-blue-600 transition-colors">
+              Watermark Remover
+              <span className="ml-1 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">FREE</span>
+            </Link>
             <Link href="/blog" className="text-gray-600 hover:text-blue-600 transition-colors">
               Blog
             </Link>
@@ -39,6 +43,17 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {session ? (
               <div className="flex items-center space-x-4">
+                {/* Subscription Badge */}
+                <div className="hidden sm:flex items-center">
+                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                    (session.user as any)?.subscriptionPlan === 'pro' 
+                      ? 'bg-yellow-100 text-yellow-800' 
+                      : 'bg-gray-100 text-gray-600'
+                  }`}>
+                    {(session.user as any)?.subscriptionPlan?.toUpperCase() || 'FREE'}
+                  </span>
+                </div>
+                
                 <div className="flex items-center space-x-2">
                   {session.user?.image && (
                     <img
@@ -51,20 +66,33 @@ export default function Header() {
                     {session.user?.name}
                   </span>
                 </div>
-                <button
-                  onClick={() => signOut()}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Sign out
-                </button>
+                
+                <div className="relative">
+                  <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="text-sm text-gray-500 hover:text-gray-700 p-1"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             ) : (
-              <button
-                onClick={() => signIn('google')}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Sign In
-              </button>
+              <div className="flex items-center space-x-3">
+                <Link 
+                  href="/auth/signin"
+                  className="text-gray-600 hover:text-blue-600 transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  href="/auth/signup"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
             )}
             
             {/* Mobile menu button */}
@@ -79,7 +107,7 @@ export default function Header() {
           </div>
         </div>
         
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation & User Menu */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <div className="flex flex-col space-y-4">
@@ -89,13 +117,67 @@ export default function Header() {
               <Link href="/image-upscaler" className="text-gray-600 hover:text-blue-600">
                 Image Upscaler
               </Link>
+              <Link href="/watermark-remover" className="text-gray-600 hover:text-blue-600 flex items-center">
+                Watermark Remover
+                <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">FREE</span>
+              </Link>
+              {session && (
+                <>
+                  <hr className="my-2" />
+                  <Link href="/dashboard" className="text-gray-600 hover:text-blue-600">
+                    Dashboard
+                  </Link>
+                  <Link href="/profile" className="text-gray-600 hover:text-blue-600">
+                    Profile
+                  </Link>
+                  <button
+                    onClick={() => signOut()}
+                    className="text-left text-gray-600 hover:text-blue-600"
+                  >
+                    Sign Out
+                  </button>
+                </>
+              )}
               <Link href="/blog" className="text-gray-600 hover:text-blue-600">
                 Blog
               </Link>
               <Link href="/pricing" className="text-gray-600 hover:text-blue-600">
                 Pricing
               </Link>
+              {!session && (
+                <>
+                  <hr className="my-2" />
+                  <Link href="/auth/signin" className="text-gray-600 hover:text-blue-600">
+                    Sign In
+                  </Link>
+                  <Link href="/auth/signup" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-center">
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
+          </div>
+        )}
+
+        {/* Desktop User Dropdown */}
+        {session && isMenuOpen && (
+          <div className="hidden md:block absolute top-16 right-4 w-48 bg-white rounded-md shadow-lg py-1 z-50 border">
+            <Link href="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Dashboard
+            </Link>
+            <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Profile Settings
+            </Link>
+            <Link href="/pricing" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Upgrade Plan
+            </Link>
+            <hr className="my-1" />
+            <button
+              onClick={() => signOut()}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Sign Out
+            </button>
           </div>
         )}
       </div>

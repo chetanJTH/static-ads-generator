@@ -41,6 +41,7 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><Link href="/remove-background" className="text-gray-400 hover:text-white">Remove Background</Link></li>
               <li><Link href="/image-upscaler" className="text-gray-400 hover:text-white">AI Image Upscaler</Link></li>
+              <li><Link href="/watermark-remover" className="text-gray-400 hover:text-white">Watermark Remover</Link></li>
             </ul>
           </div>
           
