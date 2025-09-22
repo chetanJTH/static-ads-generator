@@ -41,16 +41,29 @@ In today's competitive eCommerce landscape, content creation strategies for smal
 
           {/* Article Content */}
           <div className="prose prose-lg max-w-none">
-            <p>
-<h2>Introduction</h2><p>In today's competitive eCommerce landscape, content creation strategies for small businesses can be the difference between a sale and a bounce. High-quality visuals directly impact your bottom line.</p><h2>The eCommerce Visual Challenge</h2><p>Online shoppers can't physically touch products, making images your primary sales tool. Studies show:
-- 93% of consumers consider visual appearance the key deciding factor
-- Products with high-quality images sell 30% more than those with poor images
-- Professional photography increases perceived value by up to 50%</p><h2>Essential Image Requirements</h2><p>#<h2>Amazon Standards</h2>
-- White backgrounds (RGB 255, 255, 255)
-- Product fills 85% of frame
-- Minimum 1000x1000 pixels
-- Multiple angles and lifestyle shots</p><p>#<h2>Shopify Best Practices</h2>
-- Consistent lighting across all products
+            <h2>Introduction</h2>
+            <p>In today's competitive eCommerce landscape, content creation strategies for small businesses can be the difference between a sale and a bounce. High-quality visuals directly impact your bottom line.</p>
+            
+            <h2>The eCommerce Visual Challenge</h2>
+            <p>Online shoppers can't physically touch products, making images your primary sales tool. Studies show:</p>
+            <ul>
+              <li>93% of consumers consider visual appearance the key deciding factor</li>
+              <li>Products with high-quality images sell 30% more than those with poor images</li>
+              <li>Professional photography increases perceived value by up to 50%</li>
+            </ul>
+            
+            <h2>Essential Image Requirements</h2>
+            <h3>Amazon Standards</h3>
+            <ul>
+              <li>White backgrounds (RGB 255, 255, 255)</li>
+              <li>Product fills 85% of frame</li>
+              <li>Minimum 1000x1000 pixels</li>
+              <li>Multiple angles and lifestyle shots</li>
+            </ul>
+            
+            <h3>Shopify Best Practices</h3>
+            <ul>
+              <li>Consistent lighting across all products</li>
 - High-resolution images (2048x2048 recommended)
 - Fast loading times through optimization
 - Mobile-responsive formatting</p><h2>Creating Professional Product Images</h2><p>#<h2>Equipment Setup</h2>
