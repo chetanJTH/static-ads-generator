@@ -72,11 +72,15 @@ In today's competitive eCommerce landscape, content creation strategies for smal
             <h2>Creating Professional Product Images</h2>
             
             <h2>Equipment Setup</h2>
-You don't need expensive equipment to create professional results:
-- Smartphone with good camera
-- Natural lighting or softbox setup
-- White backdrop or seamless paper
-- Tripod for stability</p><p>#<h2>Photography Techniques</h2>
+            <p>You don't need expensive equipment to create professional results:</p>
+            <ul>
+              <li>Smartphone with good camera</li>
+              <li>Natural lighting or softbox setup</li>
+              <li>White backdrop or seamless paper</li>
+              <li>Tripod for stability</li>
+            </ul>
+            
+            <h2>Photography Techniques</h2>
 1. <strong>Lighting</strong>: Use diffused, even lighting to eliminate harsh shadows
 2. <strong>Angles</strong>: Capture multiple perspectives (front, back, sides, details)
 3. <strong>Context</strong>: Include lifestyle shots showing products in use
