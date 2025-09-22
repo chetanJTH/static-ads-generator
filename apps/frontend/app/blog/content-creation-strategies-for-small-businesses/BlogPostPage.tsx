@@ -64,9 +64,14 @@ In today's competitive eCommerce landscape, content creation strategies for smal
             <h3>Shopify Best Practices</h3>
             <ul>
               <li>Consistent lighting across all products</li>
-- High-resolution images (2048x2048 recommended)
-- Fast loading times through optimization
-- Mobile-responsive formatting</p><h2>Creating Professional Product Images</h2><p>#<h2>Equipment Setup</h2>
+              <li>High-resolution images (2048x2048 recommended)</li>
+              <li>Fast loading times through optimization</li>
+              <li>Mobile-responsive formatting</li>
+            </ul>
+            
+            <h2>Creating Professional Product Images</h2>
+            
+            <h2>Equipment Setup</h2>
 You don't need expensive equipment to create professional results:
 - Smartphone with good camera
 - Natural lighting or softbox setup
