@@ -100,11 +100,17 @@ In today's competitive eCommerce landscape, content creation strategies for smal
             </ul>
             
             <h2>Color Correction</h2>
-Accurate colors reduce returns and increase customer satisfaction:
-- Match screen colors to actual products
-- Maintain consistency across product lines
-- Consider different monitor calibrations
-- Test on various devices</p><h2>Optimization for Performance</h2><p>#<h2>File Size Management</h2>
+            <p>Accurate colors reduce returns and increase customer satisfaction:</p>
+            <ul>
+              <li>Match screen colors to actual products</li>
+              <li>Maintain consistency across product lines</li>
+              <li>Consider different monitor calibrations</li>
+              <li>Test on various devices</li>
+            </ul>
+            
+            <h2>Optimization for Performance</h2>
+            
+            <h2>File Size Management</h2>
 Balance quality with loading speed:
 - Use WebP format when possible
 - Implement responsive images
