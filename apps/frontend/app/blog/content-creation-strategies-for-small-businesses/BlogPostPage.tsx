@@ -91,11 +91,15 @@ In today's competitive eCommerce landscape, content creation strategies for smal
             <h2>Post-Processing Workflow</h2>
             
             <h2>Background Removal</h2>
-Clean, consistent backgrounds create a professional catalog appearance:
-- Remove distracting elements
-- Maintain consistent lighting
-- Ensure clean edges and transparency
-- Optimize file sizes for web</p><p>#<h2>Color Correction</h2>
+            <p>Clean, consistent backgrounds create a professional catalog appearance:</p>
+            <ul>
+              <li>Remove distracting elements</li>
+              <li>Maintain consistent lighting</li>
+              <li>Ensure clean edges and transparency</li>
+              <li>Optimize file sizes for web</li>
+            </ul>
+            
+            <h2>Color Correction</h2>
 Accurate colors reduce returns and increase customer satisfaction:
 - Match screen colors to actual products
 - Maintain consistency across product lines
