@@ -81,10 +81,16 @@ In today's competitive eCommerce landscape, content creation strategies for smal
             </ul>
             
             <h2>Photography Techniques</h2>
-1. <strong>Lighting</strong>: Use diffused, even lighting to eliminate harsh shadows
-2. <strong>Angles</strong>: Capture multiple perspectives (front, back, sides, details)
-3. <strong>Context</strong>: Include lifestyle shots showing products in use
-4. <strong>Scale</strong>: Add reference objects to show actual size</p><h2>Post-Processing Workflow</h2><p>#<h2>Background Removal</h2>
+            <ol>
+              <li><strong>Lighting</strong>: Use diffused, even lighting to eliminate harsh shadows</li>
+              <li><strong>Angles</strong>: Capture multiple perspectives (front, back, sides, details)</li>
+              <li><strong>Context</strong>: Include lifestyle shots showing products in use</li>
+              <li><strong>Scale</strong>: Add reference objects to show actual size</li>
+            </ol>
+            
+            <h2>Post-Processing Workflow</h2>
+            
+            <h2>Background Removal</h2>
 Clean, consistent backgrounds create a professional catalog appearance:
 - Remove distracting elements
 - Maintain consistent lighting
