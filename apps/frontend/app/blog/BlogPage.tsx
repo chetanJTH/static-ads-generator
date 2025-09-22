@@ -6,6 +6,18 @@ import Footer from '../../components/Footer'
 
 const blogPosts = [
   {
+    title: 'Creating Transparent Images for Web Design',
+    excerpt: '
+Introduction
+
+Artificial Intelligence is revolutionizing creating transparent images for web design, making professional-quality results accessible to everyone. Whether you're a small business owner or content creator, AI tools level the playing field.',
+    category: 'AI Tools',
+    readTime: '4 min read',
+    href: '/blog/creating-transparent-images-for-web-design',
+    image: '🤖',
+    date: 'September 22, 2025'
+  },
+{
     title: 'Image Quality Enhancement with AI Techniques (2025)',
     excerpt: 'Discover cutting-edge AI techniques for enhancing image quality, from upscaling to noise reduction. Learn how modern AI algorithms can transform low-quality images into professional-grade visuals.',
     category: 'AI Tools',
