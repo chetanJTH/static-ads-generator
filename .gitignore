@@ -11,7 +11,7 @@ build/
 
 # Environment variables
 .env
-# .env*.local  # Temporarily commented out for debugging
+.env*.local
 # .env.production  # Allow production env files for deployment
 !apps/backend/.env  # Allow backend env file for deployment
 
