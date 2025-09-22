@@ -64,24 +64,51 @@ export default function ContactPage() {
     category: 'general'
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-    console.log('Form submitted:', formData)
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
+    setErrorMessage('')
     
-    // Track conversion
-    reportConversionEvent()
-    
-    alert('Thank you for your message! We\'ll get back to you soon.')
-    
-    // Reset form after successful submission
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: '',
-      category: 'general'
-    })
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        setSubmitStatus('success')
+        // Track conversion
+        reportConversionEvent()
+        
+        // Reset form after successful submission
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          message: '',
+          category: 'general'
+        })
+      } else {
+        setSubmitStatus('error')
+        setErrorMessage(result.error || 'Failed to send message. Please try again.')
+      }
+    } catch (error) {
+      console.error('Contact form error:', error)
+      setSubmitStatus('error')
+      setErrorMessage('Network error. Please check your connection and try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -157,6 +184,36 @@ export default function ContactPage() {
           </div>
           
           <div className="bg-white rounded-lg shadow-lg p-8">
+            {/* Success Message */}
+            {submitStatus === 'success' && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="text-green-600 text-xl mr-3">✅</div>
+                  <div>
+                    <h3 className="text-green-800 font-medium">Message sent successfully!</h3>
+                    <p className="text-green-700 text-sm mt-1">
+                      Thank you for your message. We'll get back to you soon and you should receive a confirmation email shortly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {submitStatus === 'error' && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <div className="text-red-600 text-xl mr-3">❌</div>
+                  <div>
+                    <h3 className="text-red-800 font-medium">Failed to send message</h3>
+                    <p className="text-red-700 text-sm mt-1">
+                      {errorMessage}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -248,9 +305,21 @@ export default function ContactPage() {
               <div className="text-center">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors"
+                  disabled={isSubmitting}
+                  className={`px-8 py-4 rounded-lg text-lg font-medium transition-colors ${
+                    isSubmitting
+                      ? 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
                 >
-                  Send Message
+                  {isSubmitting ? (
+                    <div className="flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Sending...
+                    </div>
+                  ) : (
+                    'Send Message'
+                  )}
                 </button>
               </div>
             </form>

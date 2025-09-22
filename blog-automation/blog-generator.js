@@ -505,7 +505,9 @@ Ready to take your content to the next level? Start implementing these technique
   generateExcerpt(content) {
     const plainText = content.replace(/#{1,6}\s/g, '').replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
     const sentences = plainText.split('.').filter(s => s.trim().length > 20);
-    return sentences.slice(0, 2).join('.') + '.';
+    const excerpt = sentences.slice(0, 2).join('.') + '.';
+    // Escape single quotes and newlines for JavaScript string
+    return excerpt.replace(/'/g, "\\'").replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
   }
 
   // Calculate reading time
@@ -689,8 +691,8 @@ export default function Page() {
     const blogPostsMatch = blogPageContent.match(/const blogPosts = \[([\s\S]*?)\]/);
     if (blogPostsMatch) {
       const newPostEntry = `  {
-    title: '${newPost.title}',
-    excerpt: '${newPost.excerpt}',
+    title: '${newPost.title.replace(/'/g, "\\'")}',
+    excerpt: '${newPost.excerpt.replace(/'/g, "\\'")}',
     category: '${newPost.category}',
     readTime: '${newPost.readTime}',
     href: '/blog/${newPost.slug}',

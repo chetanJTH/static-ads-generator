@@ -5,15 +5,7 @@ module.exports = {
       cwd: '/opt/hosting/static-ads-generator/apps/frontend',
       script: 'npm',
       args: 'start',
-      env: {
-        NODE_ENV: 'production',
-        PORT: 3000,
-        NEXT_PUBLIC_API_BASE: 'https://staticapi.kraftey.com',
-        NEXTAUTH_URL: 'https://kraftey.com',
-        NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || 'your-production-secret',
-        NEXT_PUBLIC_APP_NAME: 'Static Ads Generator',
-        NEXT_PUBLIC_BASE_URL: 'https://kraftey.com'
-      },
+      env_file: '.env',
       instances: 1,
       exec_mode: 'fork',
       watch: false,
@@ -31,15 +23,7 @@ module.exports = {
       cwd: '/opt/hosting/static-ads-generator/apps/backend',
       script: 'python3',
       args: '-m uvicorn main:app --host 0.0.0.0 --port 8000',
-      env: {
-        ENVIRONMENT: 'production',
-        LOG_LEVEL: 'INFO',
-        CORS_ORIGINS: 'https://kraftey.com,https://www.kraftey.com,https://staticapi.kraftey.com',
-        API_HOST: '0.0.0.0',
-        API_PORT: 8000,
-        REPLICATE_API_TOKEN: process.env.REPLICATE_API_TOKEN,
-        FLUX_MODEL: 'black-forest-labs/flux-schnell:latest'
-      },
+      env_file: '.env',
       instances: 1,
       exec_mode: 'fork',
       watch: false,

@@ -113,3 +113,4 @@ https://your-domain.com/api/auth/callback/google
 
 And set environment variables in your hosting platform (Vercel, Netlify, etc.)
 
+

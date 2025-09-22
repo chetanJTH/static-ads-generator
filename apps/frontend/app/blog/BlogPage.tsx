@@ -6,11 +6,17 @@ import Footer from '../../components/Footer'
 
 const blogPosts = [
   {
+    title: 'Content Creation Strategies for Small Businesses',
+    excerpt: 'In today\'s competitive eCommerce landscape, content creation strategies for small businesses can be the difference between a sale and a bounce. High-quality visuals directly impact your bottom line.',
+    category: 'eCommerce',
+    readTime: '3 min read',
+    href: '/blog/content-creation-strategies-for-small-businesses',
+    image: '🛒',
+    date: 'September 22, 2025'
+  },
+{
     title: 'Creating Transparent Images for Web Design',
-    excerpt: '
-Introduction
-
-Artificial Intelligence is revolutionizing creating transparent images for web design, making professional-quality results accessible to everyone. Whether you're a small business owner or content creator, AI tools level the playing field.',
+    excerpt: 'Artificial Intelligence is revolutionizing creating transparent images for web design, making professional-quality results accessible to everyone. Whether you\'re a small business owner or content creator, AI tools level the playing field.',
     category: 'AI Tools',
     readTime: '4 min read',
     href: '/blog/creating-transparent-images-for-web-design',

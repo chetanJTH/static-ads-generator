@@ -33,6 +33,10 @@ jobs:
           # Fix permissions
           chown -R root:root .
           chmod -R 755 .
+          chmod +x scripts/*.sh
+          
+          # Setup standardized environment files (prevents env variable issues)
+          ./scripts/setup-env-files.sh
           
           # Install backend dependencies
           cd apps/backend
