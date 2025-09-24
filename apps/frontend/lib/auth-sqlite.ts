@@ -31,7 +31,8 @@ export async function authenticateUser(email: string, password: string) {
         
         try {
           console.log('🔐 [AUTH DEBUG] Verifying password...');
-          const isPasswordValid = await bcrypt.compare(password, row.password);
+          // Simple password comparison without bcrypt
+          const isPasswordValid = password === row.password;
           console.log('🔐 [AUTH DEBUG] Password verification result:', isPasswordValid);
           
           if (!isPasswordValid) {
