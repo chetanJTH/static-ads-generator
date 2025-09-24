@@ -350,7 +350,7 @@ function BlogPostForm({ post, onClose, onSave }: {
       }
     } catch (error) {
       console.error('Error saving post:', error)
-      alert(`Error: ${error.message}`)
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setSaving(false)
     }

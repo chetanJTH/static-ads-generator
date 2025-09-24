@@ -33,9 +33,7 @@ export const authOptions: NextAuthOptions = {
             access_type: "offline",
             response_type: "code"
           }
-        },
-        // Fix callback URL issue
-        redirect_uri: process.env.NEXTAUTH_URL + '/api/auth/callback/google'
+        }
       })
     ] : []),
     
@@ -68,7 +66,7 @@ export const authOptions: NextAuthOptions = {
 
         try {
           const user = await authenticateUser(credentials.email, credentials.password);
-          return user;
+          return user as any;
         } catch (error) {
           console.error('🔐 [AUTH DEBUG] Authentication error:', error)
           throw new Error('Authentication failed')
