@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 interface BlogPost {
@@ -33,7 +33,7 @@ export default function AdminBlogPage() {
   useEffect(() => {
     if (status === 'loading') return
     if (!session || session.user?.email !== 'info.kraftey@gmail.com') {
-      router.push('/')
+      router.push('/auth/signin')
     }
   }, [session, status, router])
 
@@ -46,7 +46,8 @@ export default function AdminBlogPage() {
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('/api/blog/posts')
+      // Fetch all posts regardless of status for admin panel
+      const response = await fetch('/api/blog/posts?status=all')
       if (response.ok) {
         const data = await response.json()
         setPosts(data)
@@ -85,12 +86,19 @@ export default function AdminBlogPage() {
       })
       
       if (response.ok) {
+        // Update the post status in the local state
         setPosts(posts.map(post => 
           post.slug === slug ? { ...post, status: newStatus } : post
         ))
+      } else {
+        console.error('Failed to update status:', response.status)
+        // Refresh the posts list to get the correct state
+        fetchPosts()
       }
     } catch (error) {
       console.error('Error updating status:', error)
+      // Refresh the posts list to get the correct state
+      fetchPosts()
     }
   }
 
@@ -126,12 +134,20 @@ export default function AdminBlogPage() {
               <h1 className="text-3xl font-bold text-gray-900">Blog Management</h1>
               <p className="mt-2 text-gray-600">Manage your blog posts and content</p>
             </div>
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Create New Post
-            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowCreateForm(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Create New Post
+              </button>
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
 
@@ -313,6 +329,8 @@ function BlogPostForm({ post, onClose, onSave }: {
       const url = post ? `/api/blog/posts/${post.slug}` : '/api/blog/posts'
       const method = post ? 'PUT' : 'POST'
 
+      console.log('Submitting form data:', formData) // Debug log
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -322,12 +340,17 @@ function BlogPostForm({ post, onClose, onSave }: {
       })
 
       if (response.ok) {
+        const result = await response.json()
+        console.log('Success:', result) // Debug log
         onSave()
       } else {
-        console.error('Error saving post')
+        const errorData = await response.json()
+        console.error('Error saving post:', errorData)
+        alert(`Error: ${errorData.detail || 'Failed to save post'}`)
       }
     } catch (error) {
       console.error('Error saving post:', error)
+      alert(`Error: ${error.message}`)
     } finally {
       setSaving(false)
     }
@@ -420,7 +443,7 @@ function BlogPostForm({ post, onClose, onSave }: {
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Category *
@@ -441,6 +464,65 @@ function BlogPostForm({ post, onClose, onSave }: {
                   <option value="SEO">SEO</option>
                   <option value="Business">Business</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tags
+                </label>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    defaultValue={formData.tags.join(', ')}
+                    onBlur={(e) => {
+                      const value = e.target.value;
+                      const tagsArray = value
+                        .split(',')
+                        .map(tag => tag.trim())
+                        .filter(tag => tag.length > 0);
+                      setFormData(prev => ({ ...prev, tags: tagsArray }));
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const value = e.currentTarget.value;
+                        const tagsArray = value
+                          .split(',')
+                          .map(tag => tag.trim())
+                          .filter(tag => tag.length > 0);
+                        setFormData(prev => ({ ...prev, tags: tagsArray }));
+                        e.currentTarget.blur();
+                      }
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="ai, tutorial, beginner"
+                  />
+                  <p className="text-xs text-gray-500">Type tags separated by commas. Press Enter or click outside to save.</p>
+                  {formData.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {formData.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                        >
+                          {tag}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData(prev => ({
+                                ...prev,
+                                tags: prev.tags.filter((_, i) => i !== index)
+                              }));
+                            }}
+                            className="ml-1 text-blue-600 hover:text-blue-800"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>

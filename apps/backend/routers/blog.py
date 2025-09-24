@@ -9,8 +9,14 @@ from pathlib import Path
 
 router = APIRouter(prefix="/blog", tags=["blog"])
 
+@router.post("/test")
+async def test_endpoint():
+    """Test endpoint to verify the router is working"""
+    return {"message": "Test endpoint working"}
+
 # Database path - using the same SQLite database as frontend
-DB_PATH = Path(__file__).parent.parent.parent / "frontend" / "prisma" / "prod.db"
+import os
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "apps", "frontend", "prisma", "dev.db"))
 
 # Pydantic models for API
 class BlogPostCreate(BaseModel):
@@ -26,6 +32,7 @@ class BlogPostCreate(BaseModel):
     meta_description: Optional[str] = None
     meta_keywords: Optional[str] = None
     internal_links: Optional[List[dict]] = []
+    status: str = "published"
 
 class BlogPostUpdate(BaseModel):
     title: Optional[str] = None
@@ -63,17 +70,17 @@ class BlogPostResponse(BaseModel):
 
 def get_db_connection():
     """Get database connection"""
-    if not DB_PATH.exists():
-        raise HTTPException(status_code=500, detail="Database not found")
-    return sqlite3.connect(str(DB_PATH))
+    if not os.path.exists(DB_PATH):
+        raise HTTPException(status_code=500, detail=f"Database not found at {DB_PATH}")
+    return sqlite3.connect(DB_PATH)
 
-@router.post("/posts", response_model=BlogPostResponse)
+@router.post("/posts")
 async def create_blog_post(post: BlogPostCreate):
     """Create a new blog post"""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    
     try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
         # Check if slug already exists
         cursor.execute("SELECT id FROM BlogPost WHERE slug = ?", (post.slug,))
         if cursor.fetchone():
@@ -83,73 +90,63 @@ async def create_blog_post(post: BlogPostCreate):
         cursor.execute("""
             INSERT INTO BlogPost (
                 title, slug, excerpt, content, category, tags, author,
-                featuredImage, metaTitle, metaDescription, metaKeywords,
-                internalLinks, publishedAt, createdAt, updatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                featuredImage, status, publishedAt, createdAt, updatedAt,
+                metaTitle, metaDescription, metaKeywords, viewCount, lastViewedAt, internalLinks
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             post.title, post.slug, post.excerpt, post.content, post.category,
-            json.dumps(post.tags), post.author, post.featured_image,
+            json.dumps(post.tags), post.author, post.featured_image, post.status,
+            datetime.now(), datetime.now(), datetime.now(),
             post.meta_title, post.meta_description, post.meta_keywords,
-            json.dumps(post.internal_links), datetime.now(), datetime.now(), datetime.now()
+            0, None, json.dumps(post.internal_links)
         ))
         
         post_id = cursor.lastrowid
         conn.commit()
+        conn.close()
         
-        # Return the created post
-        cursor.execute("SELECT * FROM BlogPost WHERE id = ?", (post_id,))
-        row = cursor.fetchone()
-        
-        if not row:
-            raise HTTPException(status_code=500, detail="Failed to create blog post")
-        
-        return BlogPostResponse(
-            id=str(row[0]),
-            title=row[1],
-            slug=row[2],
-            excerpt=row[3],
-            content=row[4],
-            category=row[5],
-            tags=json.loads(row[6]) if row[6] else [],
-            author=row[7],
-            featured_image=row[8],
-            status=row[9],
-            published_at=datetime.fromisoformat(row[10]),
-            created_at=datetime.fromisoformat(row[11]),
-            updated_at=datetime.fromisoformat(row[12]),
-            meta_title=row[13],
-            meta_description=row[14],
-            meta_keywords=row[15],
-            view_count=row[16],
-            internal_links=json.loads(row[18]) if row[18] else []
-        )
+        return {
+            "id": str(post_id),
+            "title": post.title,
+            "slug": post.slug,
+            "message": "Blog post created successfully"
+        }
         
     except Exception as e:
-        conn.rollback()
+        if 'conn' in locals():
+            conn.rollback()
+            conn.close()
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-    finally:
-        conn.close()
 
 @router.get("/posts", response_model=List[BlogPostResponse])
 async def get_blog_posts(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
     category: Optional[str] = None,
-    status: str = Query("published", regex="^(published|draft|archived)$")
+    status: str = Query("published", regex="^(published|draft|archived|all)$")
 ):
     """Get paginated blog posts"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
     try:
-        query = """
-            SELECT * FROM BlogPost 
-            WHERE status = ?
-        """
-        params = [status]
+        if status == "all":
+            query = """
+                SELECT * FROM BlogPost 
+            """
+            params = []
+        else:
+            query = """
+                SELECT * FROM BlogPost 
+                WHERE status = ?
+            """
+            params = [status]
         
         if category:
-            query += " AND category = ?"
+            if status == "all":
+                query += " WHERE category = ?"
+            else:
+                query += " AND category = ?"
             params.append(category)
         
         query += " ORDER BY publishedAt DESC LIMIT ? OFFSET ?"

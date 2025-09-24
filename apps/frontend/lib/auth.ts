@@ -21,21 +21,24 @@ export const authOptions: NextAuthOptions = {
   
   // Configure authentication providers
   providers: [
-    /**
-     * Google OAuth Provider
-     * Allows users to sign in with their Google account
-     */
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
+    // Only include Google OAuth if credentials are available
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET ? [
+      /**
+       * Google OAuth Provider
+       * Allows users to sign in with their Google account
+       */
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        authorization: {
+          params: {
+            prompt: "consent",
+            access_type: "offline",
+            response_type: "code"
+          }
         }
-      }
-    }),
+      })
+    ] : []),
     
     /**
      * Credentials Provider

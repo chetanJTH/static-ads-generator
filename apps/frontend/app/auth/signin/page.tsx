@@ -31,7 +31,13 @@ export default function SignInPage() {
       } else {
         // Get updated session to check subscription status
         const session = await getSession()
-        router.push('/')
+        
+        // Redirect to admin panel if admin user, otherwise to home
+        if (session?.user?.email === 'info.kraftey@gmail.com') {
+          router.push('/admin/blog')
+        } else {
+          router.push('/')
+        }
         router.refresh()
       }
     } catch (error) {
