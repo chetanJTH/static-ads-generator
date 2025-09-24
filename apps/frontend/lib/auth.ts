@@ -9,15 +9,13 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 
 // NextAuth configuration object
 export const authOptions: NextAuthOptions = {
-  // Use Prisma adapter for database integration
-  // This automatically handles user, account, and session management
-  adapter: PrismaAdapter(prisma),
+  // Remove PrismaAdapter to avoid conflicts
+  // adapter: PrismaAdapter(prisma),
   
   // Configure authentication providers
   providers: [
@@ -36,7 +34,9 @@ export const authOptions: NextAuthOptions = {
             access_type: "offline",
             response_type: "code"
           }
-        }
+        },
+        // Fix callback URL issue
+        redirect_uri: process.env.NEXTAUTH_URL + '/api/auth/callback/google'
       })
     ] : []),
     
@@ -140,6 +140,18 @@ export const authOptions: NextAuthOptions = {
         (session.user as any).subscriptionPlan = token.subscriptionPlan
       }
       return session
+    },
+    
+    /**
+     * Redirect Callback - Handle where to redirect after login
+     */
+    async redirect({ url, baseUrl }) {
+      // If it's a relative URL, make it absolute
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // If it's the same origin, allow it
+      else if (new URL(url).origin === baseUrl) return url
+      // Otherwise redirect to home
+      return baseUrl
     },
   },
   
