@@ -59,12 +59,18 @@ export const authOptions: NextAuthOptions = {
         }
       },
       async authorize(credentials) {
+        console.log('🔐 [AUTH DEBUG] Starting authentication process')
+        console.log('🔐 [AUTH DEBUG] Credentials received:', { email: credentials?.email, hasPassword: !!credentials?.password })
+        
         // Validate that credentials are provided
         if (!credentials?.email || !credentials?.password) {
+          console.log('🔐 [AUTH DEBUG] Missing credentials')
           throw new Error('Please provide both email and password')
         }
 
         try {
+          console.log('🔐 [AUTH DEBUG] Looking up user in database...')
+          
           // Find user in database by email
           const user = await prisma.user.findUnique({
             where: {
@@ -72,17 +78,32 @@ export const authOptions: NextAuthOptions = {
             }
           })
 
+          console.log('🔐 [AUTH DEBUG] User found:', { 
+            exists: !!user, 
+            hasPassword: !!user?.password,
+            userId: user?.id,
+            userEmail: user?.email 
+          })
+
           // Check if user exists and has a password (not OAuth-only user)
           if (!user || !user.password) {
+            console.log('🔐 [AUTH DEBUG] User not found or no password')
             throw new Error('Invalid email or password')
           }
 
+          console.log('🔐 [AUTH DEBUG] Verifying password...')
+          
           // Verify password using bcrypt
           const isPasswordValid = await bcrypt.compare(credentials.password, user.password)
           
+          console.log('🔐 [AUTH DEBUG] Password verification result:', isPasswordValid)
+          
           if (!isPasswordValid) {
+            console.log('🔐 [AUTH DEBUG] Password verification failed')
             throw new Error('Invalid email or password')
           }
+
+          console.log('🔐 [AUTH DEBUG] Authentication successful, returning user object')
 
           // Return user object (without password) for session
           return {
@@ -94,7 +115,12 @@ export const authOptions: NextAuthOptions = {
             subscriptionPlan: (user as any).subscription?.plan || 'free',
           }
         } catch (error) {
-          console.error('Authentication error:', error)
+          console.error('🔐 [AUTH DEBUG] Authentication error:', error)
+          console.error('🔐 [AUTH DEBUG] Error details:', {
+            message: error.message,
+            stack: error.stack,
+            name: error.name
+          })
           throw new Error('Authentication failed')
         }
       }
