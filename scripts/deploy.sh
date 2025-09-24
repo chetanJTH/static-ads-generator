@@ -43,6 +43,23 @@ pm2 stop ecosystem.config.js || print_warning "PM2 services were not running"
 print_status "Pulling latest changes from GitHub..."
 git pull origin main
 
+# Preserve existing .env files on server
+print_status "Preserving existing environment files..."
+if [ -f "apps/frontend/.env.production" ]; then
+    cp apps/frontend/.env.production apps/frontend/.env.production.backup
+    print_success "Backed up frontend .env.production"
+fi
+
+if [ -f "apps/backend/.env.production" ]; then
+    cp apps/backend/.env.production apps/backend/.env.production.backup
+    print_success "Backed up backend .env.production"
+fi
+
+if [ -f ".env.local" ]; then
+    cp .env.local .env.local.backup
+    print_success "Backed up root .env.local"
+fi
+
 print_status "Fixing file permissions..."
 chown -R root:root .
 chmod -R 755 .
@@ -75,6 +92,26 @@ else
 fi
 
 cd ..
+
+# Restore .env files if they were overwritten
+print_status "Restoring environment files..."
+if [ -f "apps/frontend/.env.production.backup" ]; then
+    cp apps/frontend/.env.production.backup apps/frontend/.env.production
+    rm apps/frontend/.env.production.backup
+    print_success "Restored frontend .env.production"
+fi
+
+if [ -f "apps/backend/.env.production.backup" ]; then
+    cp apps/backend/.env.production.backup apps/backend/.env.production
+    rm apps/backend/.env.production.backup
+    print_success "Restored backend .env.production"
+fi
+
+if [ -f ".env.local.backup" ]; then
+    cp .env.local.backup .env.local
+    rm .env.local.backup
+    print_success "Restored root .env.local"
+fi
 
 print_status "Starting PM2 services..."
 pm2 start ecosystem.config.js

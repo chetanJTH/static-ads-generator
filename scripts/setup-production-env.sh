@@ -37,11 +37,16 @@ if [ ! -f "ecosystem.config.js" ]; then
     exit 1
 fi
 
-# Create production environment file for frontend
-print_status "Creating frontend production environment file..."
+# Create production environment file for frontend (only if it doesn't exist)
+print_status "Setting up frontend production environment file..."
 
 ENV_FILE="apps/frontend/.env.production"
-cat > "$ENV_FILE" << EOF
+if [ -f "$ENV_FILE" ]; then
+    print_warning "Frontend .env.production already exists - skipping creation"
+    print_status "If you need to update it, please do so manually"
+else
+    print_status "Creating new frontend production environment file..."
+    cat > "$ENV_FILE" << EOF
 # Production Environment Variables
 NODE_ENV=production
 
@@ -65,11 +70,12 @@ GOOGLE_CLIENT_SECRET=\${GOOGLE_CLIENT_SECRET:-your-google-client-secret-here}
 NEXT_TELEMETRY_DISABLED=1
 EOF
 
-print_success "Created $ENV_FILE"
-
-# Set proper permissions
-chmod 600 "$ENV_FILE"
-print_success "Set secure permissions on environment file"
+    print_success "Created $ENV_FILE"
+    
+    # Set proper permissions
+    chmod 600 "$ENV_FILE"
+    print_success "Set secure permissions on environment file"
+fi
 
 # Create database file if it doesn't exist
 print_status "Setting up database..."
@@ -83,11 +89,16 @@ else
     print_success "Production database file already exists"
 fi
 
-# Create backend environment file
-print_status "Creating backend environment file..."
+# Create backend environment file (only if it doesn't exist)
+print_status "Setting up backend environment file..."
 
 BACKEND_ENV_FILE="apps/backend/.env.production"
-cat > "$BACKEND_ENV_FILE" << EOF
+if [ -f "$BACKEND_ENV_FILE" ]; then
+    print_warning "Backend .env.production already exists - skipping creation"
+    print_status "If you need to update it, please do so manually"
+else
+    print_status "Creating new backend production environment file..."
+    cat > "$BACKEND_ENV_FILE" << EOF
 # Backend Production Environment
 ENVIRONMENT=production
 LOG_LEVEL=INFO
@@ -101,8 +112,9 @@ REPLICATE_API_TOKEN=\${REPLICATE_API_TOKEN:-your-replicate-api-token-here}
 FLUX_MODEL=black-forest-labs/flux-schnell:latest
 EOF
 
-chmod 600 "$BACKEND_ENV_FILE"
-print_success "Created $BACKEND_ENV_FILE"
+    chmod 600 "$BACKEND_ENV_FILE"
+    print_success "Created $BACKEND_ENV_FILE"
+fi
 
 # Verify ecosystem config has required variables
 print_status "Verifying ecosystem configuration..."
@@ -172,4 +184,6 @@ echo "3. Restart PM2 services: pm2 restart ecosystem.config.js"
 echo "4. Validate environment: ./scripts/validate-env.sh"
 echo ""
 print_success "🎉 No more environment variable issues in production!"
+
+
 
