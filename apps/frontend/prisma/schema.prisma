@@ -213,3 +213,58 @@ model FeatureUsage {
   @@index([createdAt])
   @@index([userId, wasFreeTier])
 }
+
+// Blog System Models
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String   // Full blog content in markdown/HTML
+  category    String
+  tags        String?  // JSON array of tags
+  author      String   @default("Kraftey Team")
+  featuredImage String?
+  status      String   @default("published") // 'draft', 'published', 'archived'
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // SEO fields
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  
+  // Analytics
+  viewCount       Int      @default(0)
+  lastViewedAt    DateTime?
+  
+  // Internal linking
+  internalLinks   String?  // JSON array of internal links used
+  
+  @@index([slug])
+  @@index([category])
+  @@index([status, publishedAt])
+  @@index([publishedAt])
+}
+
+model BlogCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  color       String?  // Hex color for UI
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([slug])
+}
+
+model BlogTag {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  
+  @@index([slug])
+}

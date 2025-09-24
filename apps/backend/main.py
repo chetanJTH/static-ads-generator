@@ -41,7 +41,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Import routers
-from routers import remove_bg, remove_bg_replicate, design_card, health, upscale, upload, watermark_remover
+from routers import remove_bg, remove_bg_replicate, design_card, health, upscale, upload, watermark_remover, blog
 
 # Get environment
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
@@ -134,6 +134,7 @@ app.include_router(design_card.router, prefix="/design-card", tags=["design-card
 app.include_router(upload.router, tags=["file-upload"])
 app.include_router(upscale.router, tags=["image-upscale"])
 app.include_router(watermark_remover.router, prefix="/api", tags=["watermark-remover"])
+app.include_router(blog.router, tags=["blog"])
 
 # Mount static files for uploads
 import os
