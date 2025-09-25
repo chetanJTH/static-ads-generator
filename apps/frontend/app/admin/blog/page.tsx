@@ -31,23 +31,17 @@ export default function AdminBlogPage() {
 
   // Redirect if not admin
   useEffect(() => {
-    console.log('🔐 [ADMIN] Session status:', { status, hasSession: !!session, userEmail: session?.user?.email })
-    
     if (status === 'loading') return
     
     if (!session) {
-      console.log('🔐 [ADMIN] No session, redirecting to signin')
       router.push('/auth/signin')
       return
     }
     
     if (session.user?.email !== 'info.kraftey@gmail.com') {
-      console.log('🔐 [ADMIN] Not admin user, redirecting to signin')
       router.push('/auth/signin')
       return
     }
-    
-    console.log('🔐 [ADMIN] Admin access granted')
   }, [session, status, router])
 
   // Fetch blog posts
@@ -352,8 +346,6 @@ function BlogPostForm({ post, onClose, onSave }: {
       const url = post ? `/api/blog/posts/${post.slug}` : '/api/blog/posts'
       const method = post ? 'PUT' : 'POST'
 
-      console.log('Submitting form data:', formData) // Debug log
-
       const response = await fetch(url, {
         method,
         headers: {
@@ -364,7 +356,6 @@ function BlogPostForm({ post, onClose, onSave }: {
 
       if (response.ok) {
         const result = await response.json()
-        console.log('Success:', result) // Debug log
         onSave()
       } else {
         const errorData = await response.json()
