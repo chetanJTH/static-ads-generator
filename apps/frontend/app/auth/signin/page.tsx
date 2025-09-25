@@ -20,27 +20,45 @@ export default function SignInPage() {
     setError('')
 
     try {
+      console.log('🔐 [SIGNIN] Attempting to sign in with:', { email, hasPassword: !!password })
+      
       const result = await signIn('credentials', {
         email,
         password,
         redirect: false,
       })
 
+      console.log('🔐 [SIGNIN] Sign in result:', result)
+
       if (result?.error) {
+        console.error('🔐 [SIGNIN] Sign in error:', result.error)
         setError('Invalid email or password')
-      } else {
+      } else if (result?.ok) {
+        console.log('🔐 [SIGNIN] Sign in successful')
+        
         // Get updated session to check subscription status
         const session = await getSession()
+        console.log('🔐 [SIGNIN] Session after sign in:', { 
+          hasSession: !!session, 
+          userEmail: session?.user?.email,
+          isAdmin: session?.user?.email === 'info.kraftey@gmail.com'
+        })
         
         // Redirect to admin panel if admin user, otherwise to home
         if (session?.user?.email === 'info.kraftey@gmail.com') {
+          console.log('🔐 [SIGNIN] Redirecting to admin panel')
           router.push('/admin/blog')
         } else {
+          console.log('🔐 [SIGNIN] Redirecting to home')
           router.push('/')
         }
         router.refresh()
+      } else {
+        console.error('🔐 [SIGNIN] Unexpected sign in result:', result)
+        setError('An unexpected error occurred. Please try again.')
       }
     } catch (error) {
+      console.error('🔐 [SIGNIN] Sign in exception:', error)
       setError('An error occurred. Please try again.')
     } finally {
       setIsLoading(false)

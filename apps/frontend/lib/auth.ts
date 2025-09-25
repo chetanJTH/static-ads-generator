@@ -9,7 +9,7 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import { authenticateUser } from './auth-sqlite'
+import { authenticateUser } from './auth-sqlite-new'
 
 // NextAuth configuration object
 export const authOptions: NextAuthOptions = {
@@ -56,20 +56,16 @@ export const authOptions: NextAuthOptions = {
         }
       },
       async authorize(credentials) {
-        console.log('🔐 [AUTH DEBUG] Starting authentication process')
-        console.log('🔐 [AUTH DEBUG] Credentials received:', { email: credentials?.email, hasPassword: !!credentials?.password })
-        
         if (!credentials?.email || !credentials?.password) {
-          console.log('🔐 [AUTH DEBUG] Missing credentials')
-          throw new Error('Please provide both email and password')
+          return null
         }
 
         try {
           const user = await authenticateUser(credentials.email, credentials.password);
           return user as any;
         } catch (error) {
-          console.error('🔐 [AUTH DEBUG] Authentication error:', error)
-          throw new Error('Authentication failed')
+          console.error('Authentication error:', error)
+          return null
         }
       }
     })
@@ -131,4 +127,13 @@ export const authOptions: NextAuthOptions = {
   
   // Secret for JWT encryption - must be set in environment variables
   secret: process.env.NEXTAUTH_SECRET,
+  
+  // Debug mode for development
+  debug: process.env.NODE_ENV === 'development',
+  
+  // Session configuration
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
 }
