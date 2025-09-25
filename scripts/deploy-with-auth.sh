@@ -80,7 +80,14 @@ EOF
 print_success "Frontend environment file created"
 
 # Create/update backend .env.production file
-print_status "Creating backend .env.production file..."
+print_status "Checking backend .env.production file..."
+
+# Only create if it doesn't exist
+if [ -f "$BACKEND_DIR/.env.production" ]; then
+    print_warning "Backend .env.production already exists - preserving existing file"
+    print_status "If you need to update credentials, edit $BACKEND_DIR/.env.production manually"
+else
+    print_status "Creating new backend .env.production file..."
 cat > "$BACKEND_DIR/.env.production" << EOF
 # Database
 DATABASE_URL=file:./apps/frontend/prisma/dev.db
@@ -99,7 +106,8 @@ ALLOWED_ORIGINS=https://kraftey.com,https://www.kraftey.com
 MAX_FILE_SIZE=10485760
 UPLOAD_DIR=uploads
 EOF
-print_success "Backend environment file created"
+    print_success "Backend environment file created"
+fi
 
 # Step 4: Set up database
 print_status "Setting up database..."

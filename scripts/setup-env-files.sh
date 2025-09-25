@@ -28,7 +28,14 @@ if [ ! -f "ecosystem.config.js" ]; then
 fi
 
 # 1. Backend Environment File (.env - SINGLE FILE)
-print_status "Creating backend .env file..."
+print_status "Checking backend .env file..."
+
+# Only create if it doesn't exist
+if [ -f "apps/backend/.env" ]; then
+    print_warning "Backend .env file already exists - preserving existing file"
+    print_status "If you need to update credentials, edit apps/backend/.env manually"
+else
+    print_status "Creating new backend .env file..."
 
 cat > apps/backend/.env << 'EOF'
 # Backend Environment Variables
@@ -57,11 +64,19 @@ ALLOWED_HOSTS=kraftey.com,www.kraftey.com,staticapi.kraftey.com
 RATE_LIMIT_PER_MINUTE=60
 EOF
 
-chmod 600 apps/backend/.env
-print_success "Backend .env file created"
+    chmod 600 apps/backend/.env
+    print_success "Backend .env file created"
+fi
 
 # 2. Frontend Environment File (.env - SINGLE FILE)
-print_status "Creating frontend .env file..."
+print_status "Checking frontend .env file..."
+
+# Only create if it doesn't exist
+if [ -f "apps/frontend/.env" ]; then
+    print_warning "Frontend .env file already exists - preserving existing file"
+    print_status "If you need to update credentials, edit apps/frontend/.env manually"
+else
+    print_status "Creating new frontend .env file..."
 
 cat > apps/frontend/.env << 'EOF'
 # Frontend Environment Variables
@@ -85,8 +100,9 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret-here
 NEXT_TELEMETRY_DISABLED=1
 EOF
 
-chmod 600 apps/frontend/.env
-print_success "Frontend .env file created"
+    chmod 600 apps/frontend/.env
+    print_success "Frontend .env file created"
+fi
 
 # 3. Create database file
 print_status "Creating database file..."
