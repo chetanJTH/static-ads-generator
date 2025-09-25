@@ -1,5 +1,4 @@
 import sqlite3 from 'sqlite3';
-import bcrypt from 'bcryptjs';
 import path from 'path';
 
 // Direct SQLite authentication function with hardcoded path
@@ -33,44 +32,21 @@ export async function authenticateUser(email: string, password: string) {
           return;
         }
         
-        // Handle both plain text and hashed passwords
-        let isPasswordValid = false;
-        
-        if (!row.password) {
+        // Simple password comparison - no hashing complexity
+        if (!row.password || row.password !== password) {
           db.close();
           reject(new Error('Invalid email or password'));
           return;
         }
         
-        try {
-          // Check if password is hashed (starts with $2a$ or $2b$)
-          if (row.password.startsWith('$2a$') || row.password.startsWith('$2b$')) {
-            // Password is hashed, use bcrypt
-            isPasswordValid = await bcrypt.compare(password, row.password);
-          } else {
-            // Password is plain text, direct comparison
-            isPasswordValid = password === row.password;
-          }
-          
-          if (!isPasswordValid) {
-            db.close();
-            reject(new Error('Invalid email or password'));
-            return;
-          }
-          
-          resolve({
-            id: row.id,
-            email: row.email,
-            name: row.name || 'Admin User',
-            image: row.image,
-            subscriptionStatus: 'free',
-            subscriptionPlan: 'free',
-          });
-        } catch (error) {
-          console.error('Password verification error:', error);
-          db.close();
-          reject(new Error('Authentication failed'));
-        }
+        resolve({
+          id: row.id,
+          email: row.email,
+          name: row.name || 'Admin User',
+          image: row.image,
+          subscriptionStatus: 'free',
+          subscriptionPlan: 'free',
+        });
         
         db.close();
       }
