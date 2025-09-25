@@ -1,11 +1,14 @@
 import sqlite3 from 'sqlite3';
 import bcrypt from 'bcryptjs';
+import path from 'path';
 
 // Direct SQLite authentication function with hardcoded path
 export async function authenticateUser(email: string, password: string) {
   return new Promise((resolve, reject) => {
-    // Use hardcoded absolute path to database
-    const dbPath = 'C:\\Users\\cheta\\static-ads-generator\\apps\\frontend\\prisma\\dev.db';
+    // Use environment-aware database path
+    const dbPath = process.env.NODE_ENV === 'production' 
+      ? path.join(process.cwd(), 'prisma', 'dev.db')
+      : 'C:\\Users\\cheta\\static-ads-generator\\apps\\frontend\\prisma\\dev.db';
     const db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
         console.error('Database connection error:', err);
