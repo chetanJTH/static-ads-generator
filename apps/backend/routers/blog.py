@@ -68,6 +68,13 @@ class BlogPostResponse(BaseModel):
     view_count: int
     internal_links: List[dict]
 
+class PaginatedBlogPosts(BaseModel):
+    posts: List[BlogPostResponse]
+    total: int
+    page: int
+    per_page: int
+    total_pages: int
+
 def get_db_connection():
     """Get database connection"""
     if not os.path.exists(DB_PATH):
@@ -118,7 +125,7 @@ async def create_blog_post(post: BlogPostCreate):
             conn.close()
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-@router.get("/posts", response_model=List[BlogPostResponse])
+@router.get("/posts", response_model=PaginatedBlogPosts)
 async def get_blog_posts(
     skip: int = Query(0, ge=0),
     limit: int = Query(10, ge=1, le=100),
@@ -130,16 +137,31 @@ async def get_blog_posts(
     cursor = conn.cursor()
     
     try:
+        # Build base query for counting total posts
         if status == "all":
-            query = """
-                SELECT * FROM BlogPost 
-            """
+            count_query = "SELECT COUNT(*) FROM BlogPost"
+            count_params = []
+        else:
+            count_query = "SELECT COUNT(*) FROM BlogPost WHERE status = ?"
+            count_params = [status]
+        
+        if category:
+            if status == "all":
+                count_query += " WHERE category = ?"
+            else:
+                count_query += " AND category = ?"
+            count_params.append(category)
+        
+        # Get total count
+        cursor.execute(count_query, count_params)
+        total = cursor.fetchone()[0]
+        
+        # Build query for fetching posts
+        if status == "all":
+            query = "SELECT * FROM BlogPost"
             params = []
         else:
-            query = """
-                SELECT * FROM BlogPost 
-                WHERE status = ?
-            """
+            query = "SELECT * FROM BlogPost WHERE status = ?"
             params = [status]
         
         if category:
@@ -178,7 +200,17 @@ async def get_blog_posts(
                 internal_links=json.loads(row[18]) if row[18] else []
             ))
         
-        return posts
+        # Calculate pagination info
+        current_page = (skip // limit) + 1
+        total_pages = (total + limit - 1) // limit  # Ceiling division
+        
+        return PaginatedBlogPosts(
+            posts=posts,
+            total=total,
+            page=current_page,
+            per_page=limit,
+            total_pages=total_pages
+        )
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
