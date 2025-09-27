@@ -71,7 +71,7 @@ jobs:
           mkdir -p .next
           chmod 755 .next
           npm run build
-          cd ..
+          cd ../..
           
           # Restart PM2 services
           pm2 start ecosystem.config.cjs
