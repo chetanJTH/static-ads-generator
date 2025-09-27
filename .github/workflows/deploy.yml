@@ -25,9 +25,10 @@ jobs:
           cd /opt/hosting/static-ads-generator
           
           # Stop PM2 services
-          pm2 stop ecosystem.config.js || true
+          pm2 stop ecosystem.config.cjs || true
           
-          # Pull latest changes
+          # Handle local changes and pull latest
+          git stash || true
           git pull origin main
           
           # Fix permissions
@@ -35,8 +36,26 @@ jobs:
           chmod -R 755 .
           chmod +x scripts/*.sh
           
+          # Preserve existing environment files before setup
+          if [ -f "apps/backend/.env" ]; then
+            cp apps/backend/.env apps/backend/.env.backup
+          fi
+          if [ -f "apps/frontend/.env" ]; then
+            cp apps/frontend/.env apps/frontend/.env.backup
+          fi
+          
           # Setup standardized environment files (prevents env variable issues)
           ./scripts/setup-env-files.sh
+          
+          # Restore environment files if they were overwritten
+          if [ -f "apps/backend/.env.backup" ]; then
+            cp apps/backend/.env.backup apps/backend/.env
+            rm apps/backend/.env.backup
+          fi
+          if [ -f "apps/frontend/.env.backup" ]; then
+            cp apps/frontend/.env.backup apps/frontend/.env
+            rm apps/frontend/.env.backup
+          fi
           
           # Install backend dependencies
           cd apps/backend
@@ -55,8 +74,29 @@ jobs:
           cd ..
           
           # Restart PM2 services
-          pm2 start ecosystem.config.js
+          pm2 start ecosystem.config.cjs
           pm2 save
           
           # Show status
           pm2 list
+          
+          # Verify deployment
+          echo "🔍 Verifying deployment..."
+          if [ -f "apps/frontend/components/AdminBlogEditor.tsx" ]; then
+            echo "✅ AdminBlogEditor.tsx found"
+            if grep -q "Quill" apps/frontend/components/AdminBlogEditor.tsx; then
+              echo "✅ Quill editor found in AdminBlogEditor"
+            else
+              echo "❌ Quill editor NOT found in AdminBlogEditor"
+            fi
+          else
+            echo "❌ AdminBlogEditor.tsx NOT found"
+          fi
+          
+          # Check if services are running
+          if pm2 list | grep -q "online"; then
+            echo "✅ Services are running"
+          else
+            echo "❌ Some services failed to start"
+            pm2 logs --lines 10
+          fi
