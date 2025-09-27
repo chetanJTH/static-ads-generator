@@ -74,6 +74,7 @@ export const authOptions: NextAuthOptions = {
   // Use JWT strategy for sessions (stateless, good for serverless)
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   
   // Custom page routes for authentication
@@ -130,10 +131,4 @@ export const authOptions: NextAuthOptions = {
   
   // Debug mode for development
   debug: process.env.NODE_ENV === 'development',
-  
-  // Session configuration
-  session: {
-    strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
 }
