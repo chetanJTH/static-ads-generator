@@ -25,7 +25,7 @@ jobs:
           cd /opt/hosting/static-ads-generator
           
           # Stop PM2 services
-          pm2 stop ecosystem.config.js || true
+          pm2 stop ecosystem.config.cjs || true
           
           # Handle local changes and pull latest
           git stash || true
@@ -74,7 +74,7 @@ jobs:
           cd ../..
           
           # Restart PM2 services
-          pm2 start ecosystem.config.js
+          pm2 start ecosystem.config.cjs
           pm2 save
           
           # Show status
