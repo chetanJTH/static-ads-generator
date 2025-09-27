@@ -1,95 +1,88 @@
-# Static Ads Generator Frontend
+# Notion Blog Editor
 
-A Next.js frontend application for the Static Ads Generator platform.
+A simple blog editor that uses the Notion API to create and manage blog posts with rich content including text, images, and tables.
 
-## 🚀 Deployment Status
-Backend is now working perfectly with PM2!
+## Setup
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Configure Your Integration
+1. Your Notion integration token is already configured in `config.js`
+2. Create a database in Notion for your blog posts
+3. Share the database with your integration
+4. Update the `databaseId` in `config.js` with your database ID
+
+### 3. Test the Connection
+```bash
+npm test
+```
+
+### 4. Run the Application
+```bash
+npm start
+```
 
 ## Features
 
-- Modern React-based UI with Next.js 14
-- Background removal tool
-- AI banner generator
-- Blog and content pages
-- Authentication with NextAuth.js
-- Responsive design with Tailwind CSS
+- ✅ Create new blog posts
+- ✅ Add rich text content
+- ✅ Insert images with captions
+- ✅ Create tables
+- ✅ Search and retrieve existing posts
+- ✅ Update page properties
 
-## Quick Start
+## Usage Examples
 
-### Prerequisites
+### Create a Blog Post
+```javascript
+import NotionBlogEditor from './notion-api.js'
 
-- Node.js 18+
-- npm or yarn
+const blogEditor = new NotionBlogEditor()
 
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Set up environment variables:
-   ```bash
-   cp env.example .env.local
-   # Edit .env.local with your configuration
-   ```
-
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-The application will be available at `http://localhost:3000`.
-
-## Environment Variables
-
-- `NEXT_PUBLIC_API_BASE`: Backend API base URL
-- `NEXTAUTH_SECRET`: Secret for NextAuth.js
-- `NEXTAUTH_URL`: Application URL
-- Database and authentication provider variables
-
-## Deployment
-
-### Vercel (Recommended)
-The project is configured for Vercel deployment with the included `vercel.json`.
-
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push
-
-### Other Platforms
-- **Netlify**: Use `npm run build` and deploy the `.next` folder
-- **Railway**: Use the included configuration
-- **Docker**: Create a Dockerfile for containerized deployment
-
-## Project Structure
-
-```
-├── app/                 # Next.js app directory
-│   ├── api/            # API routes
-│   ├── about/          # About page
-│   ├── blog/           # Blog pages
-│   └── ...
-├── components/         # Reusable React components
-├── lib/               # Utility functions
-└── prisma/            # Database schema
+// Create a new post
+const post = await blogEditor.createBlogPost(
+  'My Blog Post Title',
+  'This is the content of my blog post.\n\nIt supports multiple paragraphs.'
+)
 ```
 
-## Development
+### Add an Image
+```javascript
+await blogEditor.addImageToPage(
+  'page-id-here',
+  'https://example.com/image.jpg',
+  'Image caption'
+)
+```
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+### Add a Table
+```javascript
+const headers = ['Name', 'Age', 'City']
+const rows = [
+  ['John Doe', '25', 'New York'],
+  ['Jane Smith', '30', 'Los Angeles']
+]
+await blogEditor.addTableToPage('page-id-here', headers, rows)
+```
 
-## Features
+## Getting Page/Database IDs
 
-- **Background Removal**: AI-powered background removal tool
-- **AI Banner Generator**: Generate banners with AI
-- **Blog System**: Content management and blog posts
-- **Authentication**: User authentication and management
-- **Responsive Design**: Mobile-first responsive design"# Automated deployment test - $(Get-Date)" 
-"# SSH key verification test - $(Get-Date)" 
-"# GitHub SSH verification test - $(Get-Date)" 
-"# Server SSH key fix test - $(Get-Date)" 
+1. Open your Notion page/database
+2. Copy the URL: `https://notion.so/workspace/Page-Title-abc123def456`
+3. The ID is the last part: `abc123def456`
+
+## Troubleshooting
+
+- **Unauthorized Error**: Make sure you've shared your page/database with the integration
+- **Object Not Found**: Check that your page/database ID is correct
+- **Invalid Request**: Verify your integration token is valid
+
+## Next Steps
+
+1. Create a web interface for the blog editor
+2. Add authentication for multiple users
+3. Implement content scheduling
+4. Add export functionality

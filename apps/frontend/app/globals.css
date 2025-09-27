@@ -12,6 +12,27 @@ body {
   background: rgb(var(--background-rgb));
 }
 
+/* Fix for admin panel input issues */
+.admin-panel input[type="text"], 
+.admin-panel input[type="email"], 
+.admin-panel textarea, 
+.admin-panel select {
+  scroll-behavior: auto !important;
+}
+
+.admin-panel input:focus, 
+.admin-panel textarea:focus, 
+.admin-panel select:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #3b82f6 !important;
+}
+
+/* Prevent space key from scrolling when typing in inputs */
+.admin-panel input[type="text"]:focus,
+.admin-panel textarea:focus {
+  scroll-behavior: auto !important;
+}
+
 .checkerboard {
   background-image: 
     linear-gradient(45deg, #ccc 25%, transparent 25%), 
