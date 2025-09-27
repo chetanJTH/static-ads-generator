@@ -262,7 +262,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         
         {/* Quill.js CDN */}
         <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
-        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+        <script src="https://cdn.quilljs.com/1.3.6/quill.min.js" async></script>
         
         {/* Structured Data */}
         {jsonLd.map((schema, index) => (
