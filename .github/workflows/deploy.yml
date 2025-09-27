@@ -25,7 +25,7 @@ jobs:
           cd /opt/hosting/static-ads-generator
           
           # Stop PM2 services
-          pm2 stop ecosystem.config.cjs || true
+          pm2 stop ecosystem.config.cjs || pm2 stop ecosystem.config.js || true
           
           # Handle local changes and pull latest
           git stash || true
@@ -60,7 +60,7 @@ jobs:
           # Install backend dependencies
           cd apps/backend
           pip3 install -r requirements.txt
-          cd ..
+          cd ../..
           
           # Install frontend dependencies
           cd apps/frontend
@@ -74,7 +74,7 @@ jobs:
           cd ../..
           
           # Restart PM2 services
-          pm2 start ecosystem.config.cjs || { echo "❌ PM2 start failed"; exit 1; }
+          pm2 start ecosystem.config.cjs || pm2 start ecosystem.config.js || { echo "❌ PM2 start failed"; exit 1; }
           pm2 save
           
           # Show status
