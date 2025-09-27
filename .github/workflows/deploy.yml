@@ -25,7 +25,7 @@ jobs:
           cd /opt/hosting/static-ads-generator
           
           # Stop PM2 services
-          pm2 stop ecosystem.config.cjs || true
+          pm2 stop ecosystem.config.js || true
           
           # Handle local changes and pull latest
           git stash || true
@@ -70,11 +70,11 @@ jobs:
           rm -rf .next
           mkdir -p .next
           chmod 755 .next
-          npm run build
+          npm run build || { echo "❌ Frontend build failed"; exit 1; }
           cd ../..
           
           # Restart PM2 services
-          pm2 start ecosystem.config.cjs
+          pm2 start ecosystem.config.js || { echo "❌ PM2 start failed"; exit 1; }
           pm2 save
           
           # Show status
@@ -99,4 +99,5 @@ jobs:
           else
             echo "❌ Some services failed to start"
             pm2 logs --lines 10
+            exit 1
           fi
